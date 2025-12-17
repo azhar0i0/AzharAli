@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import zarvean from "../assets/images/zarvean.png";
 import portfolio from "../assets/images/portfolio.png";
-import inspire from "../assets/images/InspireMeNow.png";
+import ManagementSystem from "../assets/images/ManagementSystem.png";
 import { Link } from "react-router-dom";
 
 const grid = {
@@ -30,10 +30,10 @@ export default function Projects() {
       link: "https://azharali.vercel.app",
     },
     {
-      title: "InspireMeNow",
-      desc: "Meditation & relaxation app.",
-      img: inspire,
-      link: "https://inspire-me-now-six.vercel.app/",
+      title: "ManagementSystem",
+      desc: "Shop Buddy - Payment Manager App to track expenses and income.",
+      img: ManagementSystem,
+      link: "https://shop-payment-manager-03.vercel.app/",
     },
   ];
 

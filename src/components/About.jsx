@@ -1,7 +1,7 @@
 // src/components/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import aboutImg from "../assets/images/img.jpg";
+import aboutImg from "../assets/images/pfp.jpg";
 
 const container = {
   hidden: { opacity: 0, y: 30 },
