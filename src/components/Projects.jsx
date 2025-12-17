@@ -33,7 +33,7 @@ export default function Projects() {
       title: "InspireMeNow",
       desc: "Meditation & relaxation app.",
       img: inspire,
-      link: "#",
+      link: "https://inspire-me-now-six.vercel.app/",
     },
   ];
 

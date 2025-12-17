@@ -162,7 +162,9 @@ export default function GitProjects() {
 
     const handleDashboardClick = (repo) => {
         setAlertContent([
-            "Use credentials: Gmail: admin@company.com Password: admin.me",
+            "Use credentials:",
+            "Gmail: admin@company.com",
+            "Password: admin.me",
         ]);
         setAlertUrl(repo.url);
         setShowAlert(true);

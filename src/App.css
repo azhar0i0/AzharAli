@@ -115,7 +115,7 @@ header {
 
 .home-s {
   font-weight: bold;
-  color: green;
+  color: #8E9048;
 }
 
 /* Keep row on medium+ screens, only column on mobile */
@@ -1057,7 +1057,6 @@ hr {
   list-style: none;
   padding: 0;
   margin: 20px 0 30px;
-  display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 25px;
@@ -1147,7 +1146,7 @@ hr {
 }
 
 /* ============================================
-      PREMIUM PROJECT CARDS (Awwwards Level)
+      PREMIUM PROJECT CARDS  (Vercel-like)
 ============================================ */
 
 .pro-card {

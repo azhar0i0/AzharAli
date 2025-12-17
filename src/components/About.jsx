@@ -69,7 +69,7 @@ export default function About() {
                     Languages
                   </h5>
                   <p className="mb-0 small text-muted">
-                    HTML, CSS, JS, C++, C, React, Vite, Node, React Native
+                    HTML, CSS, JavaScript, C++, C, React, Vite, Node, React Native
                   </p>
                 </div>
               </motion.div>

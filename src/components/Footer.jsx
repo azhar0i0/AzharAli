@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 
 export default function Footer() {
   return (
-    <footer className="footer" id="footer">
-      <div className="footer-container">
+    <footer className="footer relative z-50 bg-[#0d0d0d] text-white border-t border-white/10" id="footer">
+      <div className="footer-container  max-w-6xl mx-auto px-6 py-10">
         <motion.div
           className="footer-top"
           initial={{ opacity: 0, y: 20 }}
@@ -15,13 +15,15 @@ export default function Footer() {
         >
           <div className="footer-logo">AzharAli</div>
 
-          <ul className="footer-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#project">Projects</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
+          <ul className="footer-links hidden md:flex">
+  <li><a href="#home">Home</a></li>
+  <li><a href="#about">About</a></li>
+  <li><a href="#project">Projects</a></li>
+  <li><a href="#services">Services</a></li>
+  <li><a href="#contact">Contact</a></li>
+</ul>
+
+
 
           <div className="footer-social">
             <a href="https://github.com/azhar0i0" target="_blank" rel="noreferrer">
