@@ -1,6 +1,7 @@
 import React from "react";
 import pfp from "../assets/images/pfp.jpg";
 import { useState, useEffect } from "react";
+import CV from '../assets/CV.pdf'
 
 export default function Home() {
   const [typedText, setTypedText] = useState("");
@@ -68,7 +69,7 @@ export default function Home() {
               </a>
 
               <a
-                href="/CV.pdf"
+                href={CV}
                 download="Azhar_Ali_CV.pdf"
                 className="btn-home2"
               >
