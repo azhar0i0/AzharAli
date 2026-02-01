@@ -34,14 +34,14 @@ export default function Contact() {
       const result = await response.json();
 
       if (result.success) {
-        setToast({ message: "✔ Message sent successfully!", type: "success" });
+        setToast({ message: "✔  Message sent successfully!", type: "success" });
         setForm({ name: "", email: "", message: "" });
       } else {
-        setToast({ message: "✘ Failed to send message. Please try again.", type: "error" });
+        setToast({ message: "✘  Failed to send message. Please try again.", type: "error" });
       }
     } catch (error) {
       console.error(error);
-      setToast({ message: "! An error occurred. Please try again.", type: "error" });
+      setToast({ message: "!  An error occurred. Please try again.", type: "error" });
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setToast(null), 4000);
@@ -116,7 +116,7 @@ export default function Contact() {
               </a>
               <a
                 className="social-link"
-                href="https://wa.me/923298892016"
+                href="https://api.whatsapp.com/send?phone=923298892016&text=Hi%2C%20their%20I%27m%20here%20from%20your%20portfolio%20website%20%0A"
                 target="_blank"
                 rel="noreferrer"
               >

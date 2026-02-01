@@ -9,6 +9,7 @@ import Services from "./components/Services";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import "./App.css";
+import Marquee from "./components/Marquee";
 
 function App() {
   const location = useLocation(); // current route
@@ -59,7 +60,7 @@ function App() {
         position: fixed;
         bottom: 40px;
         right: 40px;
-        background: #8E9048;
+        background: #1D3269;
         color: white;
         width: 50px;
         height: 50px;
@@ -123,6 +124,7 @@ function App() {
           element={
             <>
               <Home />
+              <Marquee />
               <About />
               <Projects />
               <Services />

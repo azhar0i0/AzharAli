@@ -1,7 +1,8 @@
 import React from "react";
-import pfp from "../assets/images/pfp.jpg";
+import pfp from "../assets/images/hero-pfp.png";
 import { useState, useEffect } from "react";
 import CV from '../assets/CV.pdf'
+import Marquee from "./Marquee";
 
 export default function Home() {
   const [typedText, setTypedText] = useState("");

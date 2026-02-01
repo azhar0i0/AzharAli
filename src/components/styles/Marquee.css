@@ -1,0 +1,98 @@
+/* Variables for easy customization */
+:root {
+  --marquee-speed: 35s; /* Adjust speed: Lower is faster */
+  --marquee-text-color: #ffffff; /* Or use your theme variable */
+  --marquee-icon-color: #4966af; /* React Blue or your brand color */
+  --marquee-font-size: 1.5rem;
+  --marquee-gap: 4rem;
+}
+
+.marquee-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 1.6rem 0;
+  user-select: none;
+  background-color: black;
+  /* Fades the edges */
+  /* mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  ); */
+}
+
+.marquee-wrapper {
+  display: flex;
+  width: 100%;
+  /* Ensures the animation doesn't break on resize */
+  min-width: fit-content; 
+}
+
+.marquee-content {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  /* Hardware acceleration for smooth animation */
+  animation: scroll var(--marquee-speed) linear infinite;
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  padding-right: var(--marquee-gap);
+}
+
+.marquee-text {
+  font-family: inherit; /* Inherits your hero font */
+  font-size: var(--marquee-font-size);
+  font-weight: 700;
+  color: var(--marquee-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.marquee-icon {
+  margin-left: var(--marquee-gap);
+  color: var(--marquee-icon-color);
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+
+/* The Loop Logic */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* PRO TOUCH: Pause animation on hover for readability */
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --marquee-font-size: 1.1rem;
+    --marquee-gap: 2rem;
+  }
+  .marquee-icon {
+    font-size: 1.3rem;
+  }
+}

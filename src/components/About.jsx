@@ -1,7 +1,7 @@
 // src/components/About.jsx
 import React from "react";
 import { motion } from "framer-motion";
-import aboutImg from "../assets/images/pfp.jpg";
+import aboutImg from "../assets/images/about-pfp.jpg";
 
 const container = {
   hidden: { opacity: 0, y: 30 },
@@ -11,7 +11,7 @@ const item = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
 
 export default function About() {
   return (
-    <section className="about-section py-5" id="about">
+    <section className="about-section py-5 mt-5" id="about">
       <motion.div
         className="container"
         variants={container}
@@ -20,7 +20,7 @@ export default function About() {
         viewport={{ once: true, amount: 0.2 }}
       >
         <motion.p
-          className="section-tag text-uppercase fw-bold text-primary mb-1"
+          className="section-tag text-uppercase fw-bold text-primary mb-1 mt-lg-5"
           variants={item}
         >
           About Me
@@ -114,7 +114,7 @@ export default function About() {
             <img
               src={aboutImg}
               alt="About me"
-              className="img-fluid about-img shadow rounded"
+              className="img-fluid about-img shadow rounded-2xl"
             />
           </motion.div>
         </motion.div>

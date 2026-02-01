@@ -18,7 +18,7 @@ body::-webkit-scrollbar {
 }
 
 .text-primary{
-  color: #8E9048 !important;
+  color: #1D3269 !important;
 }
 
 a:link,
@@ -72,7 +72,7 @@ header {
 }
 
 .ul-list li:hover {
-  background-color: #8E9048;
+  background-color: #1D3269;
   padding: 10px 15px;
 }
 
@@ -99,6 +99,7 @@ header {
 /* ========== Hero Section ========== */
 .home {
   margin: 160px auto;
+  margin-bottom: 0%;
   padding: 0 10%;
   max-width: 1600px;
 }
@@ -109,13 +110,13 @@ header {
   display: inline-block;
   border-radius: 25px;
   padding: 6px 12px;
-  margin-bottom: 40px;
+  margin-bottom: 0px;
   font-size: 1rem;
 }
 
 .home-s {
   font-weight: bold;
-  color: #8E9048;
+  color: #1D3269;
 }
 
 /* Keep row on medium+ screens, only column on mobile */
@@ -135,7 +136,7 @@ header {
 
 .img-wrap img {
   width: 100%;
-  max-width: 420px;
+  max-width: 360px;
   height: auto;
   border-radius: 15px;
   object-fit: cover;
@@ -156,8 +157,8 @@ header {
 .info-home h3 {
   font-size: clamp(1.2rem, 2.5vw, 2rem);
   font-family: "Playfair Display", serif;
-  margin-bottom: 20px;
-  color: #333;
+  margin-bottom: 10px;
+  color: #1D3269;
 }
 
 .info-p {
@@ -211,7 +212,7 @@ header {
   inset: 0;
   border-radius: 10px;
   padding: 2px;
-  background: #8E9048;
+  background: #1D3269;
   background-size: 300%;
   z-index: -1;
   transition: 0.5s;
@@ -251,7 +252,7 @@ header {
   inset: 0;
   border-radius: 10px;
   padding: 2px;
-  background: #c2c47d;
+  background: #2f4a8e;
   background-size: 300%;
   z-index: -1;
   transition: 0.5s;
@@ -263,7 +264,7 @@ header {
   content: "";
   position: absolute;
   inset: 0;
-  background: #8E9048;
+  background: #1D3269;
   border-radius: 8px;
   transform: translateY(100%);
   transition: 0.4s ease;
@@ -281,7 +282,7 @@ header {
 .btn-home2:hover {
   color: #fff;
   transform: translateY(-3px) scale(1.05);
-  border-color: #8E9048;
+  border-color: #1D3269;
 }
 
 .btn-home2 i {
@@ -333,7 +334,7 @@ hr {
 }
 
 .follow ul a:hover {
-  color: green;
+  color: #1D3269;
 }
 
 /* ========== RESPONSIVE BREAKPOINTS ========== */
@@ -453,12 +454,12 @@ hr {
   letter-spacing: 2px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #8e9048;
+  color: #1D3269;
 }
 
 .custom-hr {
   width: 60px;
-  border: 2px solid #8e9048;
+  border: 2px solid #1D3269;
   border-radius: 2px;
   margin-top: 10px;
 }
@@ -540,7 +541,7 @@ hr {
 }
 
 .info-card:hover {
-  border-color: #8e9048;
+  border-color: #1D3269;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   transform: translateY(-6px);
 }
@@ -701,7 +702,7 @@ hr {
 
 .services hr {
   width: 10%;
-  border: 2px solid #8e9048;
+  border: 2px solid #1D3269;
   border-radius: 5px;
 }
 
@@ -736,7 +737,7 @@ hr {
 }
 
 .service-card h6 {
-  color: #8e9048;
+  color: #1D3269;
   margin-bottom: 10px;
   font-weight: bold;
   transition: color 0.5s ease;
@@ -745,7 +746,7 @@ hr {
 }
 
 .service-card p {
-  color: #555;
+  color: gray;
   font-size: 0.9rem;
   transition: color 0.5s ease;
   position: relative;
@@ -761,7 +762,7 @@ hr {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: #8e9048;
+  background: #1D3269;
   z-index: 1;
   transition: 0.5s;
 }
@@ -893,7 +894,6 @@ hr {
 }
 
 .contact-content {
-  padding-top: 50px;
   display: flex;
   gap: 50px;
   flex-wrap: wrap;
@@ -901,6 +901,7 @@ hr {
 }
 
 .contact-info {
+  padding-top: 50px;
   flex: 1;
   min-width: 300px;
 }
@@ -927,7 +928,7 @@ hr {
 
 .contact-item i {
   font-size: 20px;
-  color: #8e9048;
+  color: #1D3269;
 }
 
 /* Social links */
@@ -952,18 +953,7 @@ hr {
 .social-link:hover {
   transform: translateY(-5px);
   color: #fff;
-}
-
-.social-link[href*="github"]:hover {
-  background: #000;
-}
-
-.social-link[href*="linkedin"]:hover {
-  background: #0a66c2;
-}
-
-.social-link[href*="wa.me"]:hover {
-  background: #25d366;
+  background-color: #1D3269;
 }
 
 /* Form */
@@ -989,22 +979,23 @@ hr {
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: #8e9048;
+  border-color: #1D3269;
 }
 
 .btn-send {
-  background: #8e9048;
+  background: #1D3269;
+  width: 100%;
   color: #fff;
   border: none;
   padding: 12px 25px;
-  border-radius: 8px;
+  border-radius: 30px;
   cursor: pointer;
   font-size: 16px;
   transition: 0.3s;
 }
 
 .btn-send:hover {
-  background: #555023;
+  background: #2f4a8e;
 }
 
 .status {
@@ -1050,7 +1041,7 @@ hr {
 }
 
 .footer-logo:hover {
-  color: #8E9048;
+  color: #1D3269;
 }
 
 .footer-links {
@@ -1072,7 +1063,7 @@ hr {
 }
 
 .footer-links li a:hover {
-  color: #8E9048;
+  color: #1D3269;
 }
 
 .footer-social {
@@ -1089,7 +1080,7 @@ hr {
 }
 
 .footer-social a:hover {
-  color: #8E9048;
+  color: #1D3269;
   transform: translateY(-3px);
 }
 
@@ -1129,7 +1120,7 @@ hr {
 }
 
 .custom-toast.success {
-  background-color: #8e9048;
+  background-color: #1D3269;
 }
 
 .custom-toast.error {
@@ -1167,7 +1158,7 @@ hr {
 .pro-card:hover {
   transform: translateY(-12px) scale(1.03);
   box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-  border-color: #8E9048;
+  border-color: #1D3269;
 }
 
 /* Image */
@@ -1229,7 +1220,7 @@ hr {
 
 /* Button */
 .pro-btn {
-  background: #8E9048;
+  background: #1D3269;
   color: white;
   padding: 10px 14px;
   border-radius: 10px;
@@ -1326,7 +1317,7 @@ hr {
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #8E9048;
+  color: #1D3269;
   font-size: 1.2rem;
   pointer-events: none;
 }
@@ -1334,7 +1325,7 @@ hr {
 /* Hover & focus effect */
 .search-input:focus {
   outline: none;
-  border: 1px solid #8E9048;
+  border: 1px solid #1D3269;
 }
 
 /* Responsive adjustments */

@@ -32,7 +32,7 @@ export default function Footer() {
             <a href="https://www.linkedin.com/in/skibidi-azhar/" target="_blank" rel="noreferrer">
               <i className="fa-brands fa-linkedin"></i>
             </a>
-            <a href="https://wa.me/923298892016" target="_blank" rel="noreferrer">
+            <a href="https://api.whatsapp.com/send?phone=923298892016&text=Hi%2C%20their%20I%27m%20here%20from%20your%20portfolio%20website%20%0A" target="_blank" rel="noreferrer">
               <i className="fa-brands fa-whatsapp"></i>
             </a>
           </div>
