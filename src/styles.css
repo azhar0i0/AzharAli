@@ -152,11 +152,7 @@
     cursor: pointer;
   }
 
-  /* Respect animation-speed setting */
-  * {
-    animation-duration: calc(var(--anim-scale, 1) * 1s * var(--_animd, 1)) !important;
-  }
-}
+  /* Animation speed hook — components opt in via var(--anim-scale) */
 
 /* ============ Wallpapers ============ */
 .wall-paper {
