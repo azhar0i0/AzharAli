@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaGithub, FaExternalLinkAlt, FaTimes } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch } from "react-icons/fa";
 
 type Repo = {
   name: string;
@@ -29,6 +29,7 @@ export function ProjectsApp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Repo | null>(null);
   const [dashRepo, setDashRepo] = useState<Repo | null>(null);
 
   useEffect(() => {
@@ -82,19 +83,22 @@ export function ProjectsApp() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 border-b border-paper-line bg-secondary/60 px-4 py-3">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-3 border-b border-paper-line bg-secondary/60 px-4 py-3">
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">
             /repos
           </div>
           <div className="font-semibold text-olive-dark">Projects from GitHub</div>
         </div>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search projects…"
-          className="ml-auto w-56 rounded-md border border-paper-line bg-paper px-3 py-1.5 text-sm outline-none focus:border-orange"
-        />
+        <div className="relative ml-auto md:w-56 w-full">
+          <FaSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-soft" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search projects…"
+            className="md:w-56 w-full rounded-md border border-paper-line bg-paper py-1.5 pl-8 pr-3 text-sm outline-none focus:border-orange"
+          />
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
@@ -109,7 +113,7 @@ export function ProjectsApp() {
             No projects found. Add the <code className="rounded bg-secondary px-1">portfolio-project</code> or <code className="rounded bg-secondary px-1">dashboard</code> topic to your repos.
           </div>
         )}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
           {filtered.map((r, i) => (
             <motion.article
               key={r.name}
@@ -117,7 +121,16 @@ export function ProjectsApp() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -4 }}
-              className="group flex flex-col overflow-hidden rounded-lg border border-paper-line bg-card shadow-md hover:shadow-2xl"
+              onClick={() => setSelected(r)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelected(r);
+                }
+              }}
+              className="group flex cursor-pointer flex-col overflow-hidden rounded-lg border border-paper-line bg-card shadow-md outline-none hover:shadow-2xl focus-visible:ring-2 focus-visible:ring-orange"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
                 {r.image ? (
@@ -153,25 +166,11 @@ export function ProjectsApp() {
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 text-sm">
-                  <button
-                    onClick={() => {
-                      if (r.isDashboard) setDashRepo(r);
-                      else window.open(r.url, "_blank");
-                    }}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-orange px-2.5 py-1 text-xs font-semibold text-white transition hover:brightness-110"
-                  >
-                    <FaExternalLinkAlt className="text-[10px]" /> Live Demo
-                  </button>
-                  <a
-                    href={`https://github.com/${username}/${r.name}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-paper-line px-2.5 py-1 text-xs font-medium text-ink transition hover:border-olive-dark"
-                  >
-                    <FaGithub /> Code
-                  </a>
-                  <span className="ml-auto font-mono text-[10px] text-ink-soft">
+                <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 text-xs text-ink-soft">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-orange transition group-hover:gap-2.5">
+                    <FaExternalLinkAlt className="text-[10px]" /> View details
+                  </span>
+                  <span className="ml-auto font-mono text-[10px]">
                     {new Date(r.created).getFullYear()}
                   </span>
                 </div>
@@ -182,6 +181,20 @@ export function ProjectsApp() {
       </div>
 
       <AnimatePresence>
+        {selected && (
+          <ProjectDetail
+            repo={selected}
+            username={username}
+            onClose={() => setSelected(null)}
+            onVisit={() => {
+              if (selected.isDashboard) setDashRepo(selected);
+              else window.open(selected.url, "_blank");
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {dashRepo && <DashboardAlert repo={dashRepo} onClose={() => setDashRepo(null)} />}
       </AnimatePresence>
     </div>
@@ -190,18 +203,136 @@ export function ProjectsApp() {
 
 function GridSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, i) => (
+    <div className="mx-auto grid max-w-6xl grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="animate-pulse overflow-hidden rounded-lg border border-paper-line bg-card">
           <div className="aspect-[16/10] bg-secondary" />
-          <div className="space-y-2 p-4">
+          <div className="flex flex-col p-4">
             <div className="h-4 w-2/3 rounded bg-secondary" />
-            <div className="h-3 w-full rounded bg-secondary" />
-            <div className="h-3 w-5/6 rounded bg-secondary" />
+            <div className="mt-2 h-3 w-full rounded bg-secondary" />
+            <div className="mt-1.5 h-3 w-5/6 rounded bg-secondary" />
+            <div className="mt-3 flex gap-1">
+              <div className="h-4 w-12 rounded-full bg-secondary" />
+              <div className="h-4 w-14 rounded-full bg-secondary" />
+            </div>
+            <div className="mt-4 flex items-center justify-between border-t border-paper-line pt-3">
+              <div className="h-3 w-20 rounded bg-secondary" />
+              <div className="h-3 w-8 rounded bg-secondary" />
+            </div>
           </div>
         </div>
       ))}
     </div>
+  );
+}
+
+function ProjectDetail({
+  repo,
+  username,
+  onClose,
+  onVisit,
+}: {
+  repo: Repo;
+  username: string;
+  onClose: () => void;
+  onVisit: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.92, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+        onClick={(e) => e.stopPropagation()}
+        className="flex max-h-[88%] w-full max-w-md flex-col overflow-hidden rounded-xl border border-paper-line bg-card window-shadow"
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-paper-line bg-olive-dark px-3 py-1.5 text-paper">
+          <div className="truncate font-mono text-[11px]">
+            C:\AzharAli\Projects\{repo.name}
+          </div>
+          <button
+            onClick={onClose}
+            className="ml-2 shrink-0 rounded p-1 text-paper/70 transition hover:bg-paper/10 hover:text-paper"
+          >
+            <FaTimes className="text-xs" />
+          </button>
+        </div>
+
+        <div className="relative aspect-[2/1] shrink-0 overflow-hidden border-b border-paper-line bg-secondary">
+          {repo.image ? (
+            <img
+              src={repo.image}
+              alt={repo.name}
+              className="absolute inset-0 h-full w-full object-cover object-top"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange-soft/40 font-mono text-4xl text-olive-dark">
+              {repo.name.slice(0, 2).toUpperCase()}
+            </div>
+          )}
+          {repo.isDashboard && (
+            <span className="absolute left-2 top-2 rounded-full bg-blue px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+              Dashboard
+            </span>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="truncate text-base font-semibold text-olive-dark">{repo.name}</h2>
+            <span className="shrink-0 font-mono text-[11px] text-ink-soft">
+              {new Date(repo.created).getFullYear()}
+            </span>
+          </div>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">
+            {repo.desc ?? "No description provided."}
+          </p>
+
+          {repo.topics.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {repo.topics.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full bg-secondary px-2 py-0.5 font-mono text-[11px] text-ink-soft"
+                >
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 max-w-50">
+            <a
+              href={`https://github.com/${username}/${repo.name}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-olive-dark px-1 py-1.5 text-xs font-semibold text-paper transition hover:brightness-110"
+            >
+              <FaGithub /> Code
+            </a>
+            <button
+              onClick={onVisit}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-orange px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-110"
+            >
+              <FaExternalLinkAlt className="text-[10px]" /> Visit Site
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

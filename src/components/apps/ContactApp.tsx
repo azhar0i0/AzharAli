@@ -4,14 +4,34 @@ import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaGithub, FaLinkedin } from "react
 
 export function ContactApp() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const body = `From: ${form.name} <${form.email}>%0D%0A%0D%0A${encodeURIComponent(form.message)}`;
-    window.location.href = `mailto:azharisworking@gmail.com?subject=${encodeURIComponent(form.subject || "Hello Azhar")}&body=${body}`;
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    setStatus("sending");
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: "bd4a3a0a-b47b-4984-be76-81f284a36b84",
+          subject: form.subject || `New message from ${form.name}`,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStatus("success");
+        setForm({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+    setTimeout(() => setStatus("idle"), 4000);
   };
 
   return (
@@ -47,22 +67,25 @@ export function ContactApp() {
         <Field label="Email">
           <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputCls} placeholder="you@example.com" />
         </Field>
-        <Field label="Subject">
-          <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={inputCls} placeholder="Project idea" />
-        </Field>
         <Field label="Message">
           <textarea required rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className={`${inputCls} resize-none`} placeholder="Tell me about your project…" />
         </Field>
         <motion.button
           whileTap={{ scale: 0.97 }}
           type="submit"
-          className="w-full rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white shadow-[0_2px_0_#c56e17] transition hover:-translate-y-0.5"
+          disabled={status === "sending"}
+          className="w-full rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white shadow-[0_2px_0_#c56e17] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Send Message
+          {status === "sending" ? "Sending…" : "Send Message"}
         </motion.button>
-        {sent && (
+        {status === "success" && (
           <div className="rounded-md border border-green-500/40 bg-green-500/10 p-2 text-center text-xs text-green-700">
-            Opening your mail client…
+            Message sent — I'll get back to you soon!
+          </div>
+        )}
+        {status === "error" && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-center text-xs text-destructive">
+            Something went wrong. Please try again or email me directly.
           </div>
         )}
       </form>

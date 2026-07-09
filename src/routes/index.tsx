@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Desktop } from "@/components/desktop/Desktop";
+import { MobileView } from "@/components/mobile/MobileView";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,5 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  return <Desktop />;
+  const isMobile = useIsMobile();
+  // On phones the desktop-OS metaphor gives way to a focused two-tab layout.
+  return isMobile ? <MobileView /> : <Desktop />;
 }

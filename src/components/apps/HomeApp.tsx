@@ -9,7 +9,7 @@ const ROLES = [
   "Next.js Developer",
   "Full Stack Developer",
   "Frontend Engineer",
-  "UI Developer",
+  "Backend Engineer",
 ];
 
 function useTyping(words: string[]) {

@@ -47,7 +47,9 @@ export function Window({ w }: { w: WindowState }) {
               isActive ? "bg-olive-dark text-paper" : "bg-olive text-paper/80"
             }`}
           >
-            <span className="scale-90"><AppIcon appId={w.appId} size={18} /></span>
+            <span className="scale-90">
+              <AppIcon appId={w.appId} size={18} />
+            </span>
             <span className="truncate font-mono">{w.title}</span>
             <div className="window-no-drag ml-auto flex items-center gap-1">
               <TitleBtn onClick={() => minimize(w.id)} label="Minimize">

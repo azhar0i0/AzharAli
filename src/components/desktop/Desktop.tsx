@@ -19,7 +19,15 @@ const WALL_CLASS: Record<string, string> = {
 
 function hexToRgb(hex: string) {
   const h = hex.replace("#", "");
-  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  const n = parseInt(
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h,
+    16,
+  );
   return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
 }
 
@@ -97,7 +105,9 @@ export function Desktop() {
       }
       // Detect interactive hover for cursor state
       const target = e.target as HTMLElement | null;
-      const interactive = !!target?.closest("button,a,[role=button],input,textarea,select,.window-drag-handle");
+      const interactive = !!target?.closest(
+        "button,a,[role=button],input,textarea,select,.window-drag-handle",
+      );
       setHoverTarget(interactive ? "interactive" : "idle");
     };
     window.addEventListener("mousemove", onMove);
@@ -108,7 +118,7 @@ export function Desktop() {
 
   return (
     <div
-      className="relative h-screen w-screen overflow-hidden"
+      className="relative h-dvh w-screen overflow-hidden"
       onContextMenu={(e) => {
         e.preventDefault();
         const pad = 12;
@@ -157,7 +167,7 @@ export function Desktop() {
       <BootScreen />
       <BootFinished />
 
-      {/* Custom cursor */}
+      {/* Custom cursor (pointer devices only) */}
       {cursorStyle !== "default" && cursorStyle !== "off" && (
         <div
           ref={cursorRef}
