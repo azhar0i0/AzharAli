@@ -153,6 +153,8 @@
   }
 
   /* Animation speed hook — components opt in via var(--anim-scale) */
+}
+
 
 /* ============ Wallpapers ============ */
 .wall-paper {
