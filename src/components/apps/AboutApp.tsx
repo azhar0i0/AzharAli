@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import avatar from "@/assets/avatar.png";
+import avatar from "@/assets/avatar.jpg";
 
 const TIMELINE = [
   { year: "2024", title: "Freelance Full-Stack Developer", detail: "Shipping React/Next.js apps for clients globally." },
@@ -27,7 +27,7 @@ export function AboutApp() {
         />
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">About Me</div>
-          <h1 className="mt-1 text-3xl font-bold text-olive-dark">Hi, I'm Azhar 👋</h1>
+          <h1 className="mt-1 text-3xl font-bold text-olive-dark">Hi, I'm Azhar</h1>
           <p className="mt-2 max-w-prose text-ink">
             A full-stack developer based in Pakistan with 2+ years spent
             building web and app interfaces. I enjoy creating polished user

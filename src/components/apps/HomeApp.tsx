@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import avatar from "@/assets/avatar.png";
+import avatar from "@/assets/avatar.jpg";
 import { useWindowStore } from "@/lib/desktop/store";
 
 const ROLES = [
