@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { useIconStore, useWindowStore, type AppId } from "@/lib/desktop/store";
+import { useIconStore, useSettingsStore, useWindowStore, type AppId } from "@/lib/desktop/store";
 import { APP_META } from "@/lib/desktop/apps";
 import { AppIcon } from "./AppIcon";
 
-const GRID_W = 96;
-const GRID_H = 100;
+const SIZE_MAP = {
+  sm: { grid: 82, cell: 86, icon: 36, font: "text-[11px]", w: "w-[74px]" },
+  md: { grid: 96, cell: 100, icon: 44, font: "text-xs", w: "w-20" },
+  lg: { grid: 112, cell: 118, icon: 56, font: "text-sm", w: "w-24" },
+} as const;
+
 const ORIGIN_X = 20;
 const ORIGIN_Y = 20;
+const DRAG_THRESHOLD = 4;
 
 export function DesktopIcon({
   appId,
@@ -22,68 +27,101 @@ export function DesktopIcon({
 }) {
   const move = useIconStore((s) => s.move);
   const openApp = useWindowStore((s) => s.open);
-  const [drag, setDrag] = useState<{ dx: number; dy: number } | null>(null);
-  const [pos, setPos] = useState({ x: ORIGIN_X + col * GRID_W, y: ORIGIN_Y + row * GRID_H });
-  const startRef = useRef<{ mx: number; my: number; ox: number; oy: number } | null>(null);
-  const clickRef = useRef({ moved: false });
+  const iconSize = useSettingsStore((s) => s.iconSize);
+  const S = SIZE_MAP[iconSize];
+
+  const basePos = { x: ORIGIN_X + col * S.grid, y: ORIGIN_Y + row * S.cell };
+  const [pos, setPos] = useState(basePos);
+  const [dragging, setDragging] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const stateRef = useRef({
+    startMX: 0,
+    startMY: 0,
+    startX: 0,
+    startY: 0,
+    moved: false,
+    lastClick: 0,
+    pointerId: -1,
+  });
 
   useEffect(() => {
-    setPos({ x: ORIGIN_X + col * GRID_W, y: ORIGIN_Y + row * GRID_H });
-  }, [col, row]);
+    setPos({ x: ORIGIN_X + col * S.grid, y: ORIGIN_Y + row * S.cell });
+  }, [col, row, S.grid, S.cell]);
 
-  useEffect(() => {
-    if (!drag) return;
-    const onMove = (e: PointerEvent) => {
-      if (!startRef.current) return;
-      const nx = e.clientX - startRef.current.mx + startRef.current.ox;
-      const ny = e.clientY - startRef.current.my + startRef.current.oy;
-      if (Math.abs(nx - (ORIGIN_X + col * GRID_W)) > 3 || Math.abs(ny - (ORIGIN_Y + row * GRID_H)) > 3) {
-        clickRef.current.moved = true;
-      }
-      setPos({ x: nx, y: ny });
-    };
-    const onUp = () => {
-      const c = Math.max(0, Math.round((pos.x - ORIGIN_X) / GRID_W));
-      const r = Math.max(0, Math.round((pos.y - ORIGIN_Y) / GRID_H));
-      move(appId, c, r);
-      setDrag(null);
-      startRef.current = null;
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-    };
-  }, [drag, pos, appId, col, row, move]);
-
-  const onPointerDown = (e: React.PointerEvent) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (e.button !== 0) return;
-    e.preventDefault();
-    clickRef.current.moved = false;
-    startRef.current = { mx: e.clientX, my: e.clientY, ox: pos.x, oy: pos.y };
-    setDrag({ dx: 0, dy: 0 });
+    setSelected(true);
+    const st = stateRef.current;
+    st.startMX = e.clientX;
+    st.startMY = e.clientY;
+    st.startX = pos.x;
+    st.startY = pos.y;
+    st.moved = false;
+    st.pointerId = e.pointerId;
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
-  const onDouble = () => openApp(appId);
+  const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const st = stateRef.current;
+    if (st.pointerId !== e.pointerId) return;
+    const dx = e.clientX - st.startMX;
+    const dy = e.clientY - st.startMY;
+    if (!st.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+    st.moved = true;
+    setDragging(true);
+    setPos({ x: st.startX + dx, y: st.startY + dy });
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const st = stateRef.current;
+    if (st.pointerId !== e.pointerId) return;
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+    st.pointerId = -1;
+    if (st.moved) {
+      const c = Math.max(0, Math.round((pos.x - ORIGIN_X) / S.grid));
+      const r = Math.max(0, Math.round((pos.y - ORIGIN_Y) / S.cell));
+      move(appId, c, r);
+      setDragging(false);
+      return;
+    }
+    // Click / double-click logic (works reliably across desktop + touch)
+    const now = Date.now();
+    if (now - st.lastClick < 320) {
+      openApp(appId);
+      st.lastClick = 0;
+    } else {
+      st.lastClick = now;
+    }
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openApp(appId);
+    }
+  };
 
   return (
     <motion.button
       onPointerDown={onPointerDown}
-      onDoubleClick={onDouble}
-      onClick={() => {
-        // single click = focus visual only; open on double-click.
-        // On touch, open if it wasn't a drag.
-        if (!clickRef.current.moved && "ontouchstart" in window) openApp(appId);
-      }}
-      style={{ left: pos.x, top: pos.y }}
-      animate={{ scale: drag ? 1.05 : 1 }}
-      whileHover={{ y: -2 }}
-      className="group absolute flex w-20 flex-col items-center gap-1 rounded-md p-2 text-center focus:outline-none"
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onDoubleClick={() => openApp(appId)}
+      onKeyDown={onKeyDown}
+      onBlur={() => setSelected(false)}
+      style={{ left: pos.x, top: pos.y, touchAction: "none" }}
+      animate={{ scale: dragging ? 1.06 : 1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 28 }}
+      className={`absolute flex ${S.w} cursor-pointer flex-col items-center gap-1 rounded-md p-2 text-center focus:outline-none ${
+        selected ? "bg-orange/20 ring-1 ring-orange/50" : "hover:bg-white/25 dark:hover:bg-white/5"
+      }`}
       aria-label={`Open ${APP_META[appId].label}`}
     >
-      <AppIcon appId={appId} size={44} />
-      <span className="max-w-full truncate rounded-sm px-1 text-xs font-medium text-ink group-hover:bg-olive-dark/90 group-hover:text-paper">
+      <AppIcon appId={appId} size={S.icon} />
+      <span
+        className={`max-w-full break-words rounded-sm px-1 ${S.font} font-medium leading-tight text-ink drop-shadow-[0_1px_0_rgba(255,255,255,0.6)] dark:text-paper dark:drop-shadow-[0_1px_0_rgba(0,0,0,0.6)]`}
+      >
         {label}
       </span>
     </motion.button>
