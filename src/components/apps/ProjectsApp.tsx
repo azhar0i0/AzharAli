@@ -109,7 +109,7 @@ export function ProjectsApp() {
             No projects found. Add the <code className="rounded bg-secondary px-1">portfolio-project</code> or <code className="rounded bg-secondary px-1">dashboard</code> topic to your repos.
           </div>
         )}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filtered.map((r, i) => (
             <motion.article
               key={r.name}
@@ -117,7 +117,7 @@ export function ProjectsApp() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -4 }}
-              className="group flex flex-col overflow-hidden rounded-lg border border-paper-line bg-card window-shadow"
+              className="group flex flex-col overflow-hidden rounded-lg border border-paper-line bg-card shadow-md hover:shadow-2xl"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
                 {r.image ? (

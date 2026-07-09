@@ -2,7 +2,9 @@ import { motion } from "framer-motion";
 import avatar from "@/assets/avatar.jpg";
 
 const TIMELINE = [
-  { year: "2024", title: "Freelance Full-Stack Developer", detail: "Shipping React/Next.js apps for clients globally." },
+  { year: "2026", title: "DevOps & AI Developer", detail: "Exploring the intersection of DevOps practices and AI technologies." },
+  { year: "2025", title: "Backend Developer", detail: "Working on Node.js or Express for better performance." },
+  { year: "2024", title: "Freelance Full-Stack Developer", detail: "Shipping React/Next.js (pwa) apps for clients globally." },
   { year: "2023", title: "Frontend Developer", detail: "Focused on design systems, animations & performance." },
   { year: "2022", title: "Started Web Development", detail: "Fell in love with React and modern UI engineering." },
 ];
@@ -29,7 +31,7 @@ export function AboutApp() {
           <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">About Me</div>
           <h1 className="mt-1 text-3xl font-bold text-olive-dark">Hi, I'm Azhar</h1>
           <p className="mt-2 max-w-prose text-ink">
-            A full-stack developer based in Pakistan with 2+ years spent
+            A full-stack developer based in Pakistan with about 3 years spent
             building web and app interfaces. I enjoy creating polished user
             experiences while writing maintainable backend systems.
           </p>

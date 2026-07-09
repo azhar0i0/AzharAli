@@ -24,7 +24,7 @@ export function StartMenu({ open, onClose }: { open: boolean; onClose: () => voi
               <span className="grid h-7 w-7 place-items-center rounded-md bg-orange font-bold text-white">A</span>
               <div className="leading-tight">
                 <div className="text-sm font-semibold">Azhar Ali</div>
-                <div className="font-mono text-[10px] text-paper/70">azhar@azharos</div>
+                <div className="font-mono text-[10px] text-paper/70">@azharisworking</div>
               </div>
             </div>
             <ul className="max-h-72 overflow-y-auto p-1 scrollbar-thin">
@@ -57,9 +57,9 @@ export function StartMenu({ open, onClose }: { open: boolean; onClose: () => voi
             </div>
             <button
               onClick={() => { onClose(); shutdownAnim(); }}
-              className="flex w-full items-center gap-2 border-t border-paper-line bg-olive-dark/95 px-3 py-2 text-sm text-paper hover:bg-olive-dark"
+              className="flex w-full items-center gap-2 border-t border-paper-line bg-olive-dark/95 px-3 py-2 text-sm text-paper hover:bg-olive-dark cursor-pointer"
             >
-              <FaPowerOff className="text-orange" /> Shut down
+              <FaPowerOff className="text-orange" /> Restart System
             </button>
           </motion.div>
         </>
