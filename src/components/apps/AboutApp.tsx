@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import avatar from "@/assets/avatar.png";
+import avatar from "@/assets/avatar.jpg";
 
 const TIMELINE = [
   { year: "2026", title: "DevOps & AI Developer", detail: "Exploring the intersection of DevOps practices and AI technologies." },
@@ -29,7 +29,7 @@ export function AboutApp() {
         />
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">About Me</div>
-          <h1 className="mt-1 text-3xl font-bold text-olive-dark">Hi, I'm Azhar 👋</h1>
+          <h1 className="mt-1 text-3xl font-bold text-olive-dark">Hi, I'm Azhar</h1>
           <p className="mt-2 max-w-prose text-ink">
             A full-stack developer based in Pakistan with about 3 years spent
             building web and app interfaces. I enjoy creating polished user
