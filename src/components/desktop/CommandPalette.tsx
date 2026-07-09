@@ -46,7 +46,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={onKey}
-              placeholder="Search apps, projects, actions… (Ctrl/⌘+K)"
+              placeholder="Search apps, projects, actions… (Ctrl+K)"
               className="w-full border-b border-paper-line bg-transparent px-4 py-3 text-sm outline-none"
             />
             <ul className="max-h-72 overflow-y-auto scrollbar-thin">
