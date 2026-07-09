@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import avatar from "@/assets/avatar.png";
+import avatar from "@/assets/avatar.jpg";
 
 const TIMELINE = [
   { year: "2024", title: "Freelance Full-Stack Developer", detail: "Shipping React/Next.js apps for clients globally." },
