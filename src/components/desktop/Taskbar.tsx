@@ -5,6 +5,7 @@ import { useWindowStore } from "@/lib/desktop/store";
 import { APP_META } from "@/lib/desktop/apps";
 import { AppIcon } from "./AppIcon";
 import { StartMenu } from "./StartMenu";
+import { Github, Linkedin } from "lucide-react";
 
 export function Taskbar() {
   const { windows, activeId, toggleMinimize } = useWindowStore();
@@ -52,12 +53,12 @@ export function Taskbar() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-2 text-paper/80 md:flex">
-          <a href="https://github.com/azhar0i0" target="_blank" rel="noreferrer" className="hover:text-white"><FaGithub /></a>
-          <a href="https://www.linkedin.com/in/skibidi-azhar" target="_blank" rel="noreferrer" className="hover:text-white"><FaLinkedin /></a>
-          <a href="mailto:azharisworking@gmail.com" className="hover:text-white"><FaEnvelope /></a>
+        <div className="hidden items-center gap-3 text-paper/80 md:flex">
+          <a href="https://github.com/azhar0i0" target="_blank" rel="noreferrer" className="px-1 py-1 bg-[#F7F4E8] hover:bg-accent border-2 border-primary rounded-md text-primary"><Github /></a>
+          <a href="https://www.linkedin.com/in/skibidi-azhar" target="_blank" rel="noreferrer" className="px-1 py-1 bg-[#F7F4E8] hover:bg-accent border-2 border-primary rounded-md text-primary"><Linkedin /></a>
+          <a href="mailto:azharisworking@gmail.com" className="px-2 py-2 bg-[#F7F4E8] hover:bg-accent border-2 border-primary rounded-md text-primary"><FaEnvelope /></a>
         </div>
-        <div className="ml-1 rounded-md bg-olive-dark px-2 py-1 text-center font-mono text-[11px] leading-tight">
+        <div className="ml-1 rounded-md bg-olive-dark px-4 py-1 text-center font-mono text-[11px] leading-tight">
           <div>{now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
           <div className="text-paper/60">{now.toLocaleDateString([], { month: "short", day: "numeric" })}</div>
         </div>

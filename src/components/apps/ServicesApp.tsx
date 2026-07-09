@@ -33,6 +33,12 @@ const SERVICES: { icon: ReactNode; title: string; desc: string; tags: string[] }
     desc: "Squeezing every millisecond out of your app + technical SEO that ranks.",
     tags: ["Lighthouse", "Animations"],
   },
+  {
+    icon: <FaBolt />,
+    title: "Saas & E-commerce or POS",
+    desc: "Building Saas, E-commerce or POS apps with modern tech stack and best practices.",
+    tags: ["React", "Next.js", "Node.js", "Express"],
+  },
 ];
 
 export function ServicesApp() {
@@ -42,7 +48,7 @@ export function ServicesApp() {
         <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">Menu</div>
         <h1 className="text-2xl font-bold text-olive-dark">Services</h1>
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {SERVICES.map((s, i) => (
           <motion.div
             key={s.title}

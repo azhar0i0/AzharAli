@@ -15,14 +15,14 @@ export function ContactApp() {
   };
 
   return (
-    <div className="grid h-full grid-cols-1 md:grid-cols-[220px_1fr]">
+    <div className="grid h-full grid-cols-1 md:grid-cols-[230px_1fr]">
       <aside className="space-y-3 border-b border-paper-line bg-secondary/60 p-5 text-sm md:border-b-0 md:border-r">
         <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">Reach out</div>
         <h2 className="text-lg font-bold text-olive-dark">Let's talk</h2>
         <ul className="space-y-2 text-ink">
           <li className="flex items-start gap-2">
+            <a href="mailto:azharisworking@gmail.com" className="hover:underline flex items-start gap-2">
             <FaEnvelope className="mt-1 text-orange" />
-            <a href="mailto:azharisworking@gmail.com" className="hover:underline">
               azharisworking@gmail.com
             </a>
           </li>

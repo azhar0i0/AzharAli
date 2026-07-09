@@ -18,7 +18,7 @@ export function ResumeApp() {
 
         <Section title="Summary">
           <p className="text-sm leading-relaxed">
-            Full-stack developer with 2+ years of experience building web and mobile
+            Full-stack developer with 3 years of experience building web and mobile
             interfaces. I specialize in React, Next.js, and TypeScript with a strong
             eye for UX, animation, and performance.
           </p>

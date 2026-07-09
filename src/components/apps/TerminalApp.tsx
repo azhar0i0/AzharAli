@@ -34,7 +34,7 @@ export function TerminalApp() {
     const [name, ...args] = cmd.split(/\s+/);
     switch (name.toLowerCase()) {
       case "help":
-        println("Available: help about projects skills contact resume github linkedin clear whoami neofetch date theme");
+        println("Available: help about projects skills contact resume github linkedin clear who am i neofetch date theme");
         break;
       case "about":
         openApp("about");

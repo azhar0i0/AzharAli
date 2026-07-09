@@ -63,7 +63,7 @@ export function HomeApp() {
         </motion.div>
         <div>
           <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">
-            &gt; whoami
+            &gt; who am i
           </div>
           <h1 className="mt-1 font-sans text-4xl font-bold tracking-tight text-olive-dark">
             Azhar Ali
@@ -77,7 +77,7 @@ export function HomeApp() {
 
       <p className="max-w-prose leading-relaxed text-ink">
         I create beautiful, functional, and user-centered digital experiences.
-        Over 2+ years of building web and mobile products — transforming ideas
+        Over 3 years of building web and mobile products — transforming ideas
         into elegant, scalable applications with modern tech and thoughtful
         design.
       </p>
