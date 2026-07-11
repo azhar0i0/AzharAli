@@ -29,22 +29,26 @@ export function Window({ w }: { w: WindowState }) {
         })
       }
       style={{ zIndex: w.zIndex, display: w.minimized ? "none" : undefined }}
+      className="pointer-events-auto"
       onMouseDown={() => focus(w.id)}
       disableDragging={w.maximized}
       enableResizing={!w.maximized}
     >
       <AnimatePresence>
         <motion.div
+          data-window
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.18 }}
-          className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-olive-dark/70 bg-card window-shadow"
+          className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-[var(--chrome-border)] bg-card window-shadow"
         >
           <div
             onDoubleClick={() => maximize(w.id)}
-            className={`window-drag-handle flex select-none items-center gap-2 border-b border-olive-dark/60 px-3 py-1.5 text-xs ${
-              isActive ? "bg-olive-dark text-paper" : "bg-olive text-paper/80"
+            className={`window-drag-handle flex select-none items-center gap-2 border-b border-[var(--chrome-border)] px-3 py-1.5 text-xs ${
+              isActive
+                ? "bg-[var(--chrome)] text-[var(--chrome-fg)]"
+                : "bg-[var(--chrome-raised)] text-[var(--chrome-fg-dim)]"
             }`}
           >
             <span className="scale-90">
@@ -87,8 +91,8 @@ function TitleBtn({
     <button
       onClick={onClick}
       aria-label={label}
-      className={`grid h-5 w-6 place-items-center rounded-sm border border-black/20 bg-paper/90 text-ink transition hover:bg-paper ${
-        danger ? "hover:bg-destructive hover:text-white" : ""
+      className={`grid h-5 w-6 place-items-center rounded-sm border border-[var(--chrome-border)] bg-[var(--chrome-raised)] text-[var(--chrome-fg)] transition hover:brightness-125 ${
+        danger ? "hover:bg-destructive hover:text-white hover:brightness-100" : ""
       }`}
     >
       {children}

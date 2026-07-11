@@ -27,6 +27,10 @@ export interface WindowState {
   prev?: { x: number; y: number; width: number; height: number };
 }
 
+/** Taskbar height in px (matches the `h-12` bar). The window work area and the
+ *  desktop context menu both stay above this line, like a real OS. */
+export const TASKBAR_HEIGHT = 48;
+
 interface WindowStore {
   windows: WindowState[];
   activeId: string | null;
@@ -159,14 +163,17 @@ export const useWindowStore = create<WindowStore>()((set, get) => ({
         if (w.maximized && w.prev) {
           return { ...w, maximized: false, ...w.prev, prev: undefined };
         }
+        const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+        const vh = typeof window !== "undefined" ? window.innerHeight : 800;
         return {
           ...w,
           maximized: true,
           prev: { x: w.x, y: w.y, width: w.width, height: w.height },
-          x: 8,
-          y: 8,
-          width: (typeof window !== "undefined" ? window.innerWidth : 1280) - 16,
-          height: (typeof window !== "undefined" ? window.innerHeight : 800) - 64,
+          x: 0,
+          y: 0,
+          width: vw,
+          // Fill the work area, stopping just above the taskbar.
+          height: vh - TASKBAR_HEIGHT,
         };
       }),
     })),
@@ -233,34 +240,54 @@ export const useIconStore = create<IconStore>()(
 );
 
 // ============ Settings store ============
-export type ThemeMode = "light" | "dark";
-export type WallpaperKind = "paper" | "olive" | "night" | "sunset" | "ocean" | "graphite";
 export type CursorStyle = "default" | "retro" | "dot" | "off";
 export type IconSize = "sm" | "md" | "lg";
 export type AnimSpeed = "off" | "slow" | "normal" | "fast";
 
-export const ACCENT_PRESETS = [
-  { id: "orange", label: "Orange", color: "#f08a24" },
-  { id: "blue", label: "Blue", color: "#4a6d8c" },
-  { id: "emerald", label: "Emerald", color: "#2f9e6b" },
-  { id: "rose", label: "Rose", color: "#d95a7a" },
-  { id: "violet", label: "Violet", color: "#7c5ad9" },
-  { id: "amber", label: "Amber", color: "#d4a935" },
+/**
+ * A Theme is a complete, self-consistent look: it drives the wallpaper, the
+ * window/desktop text colors, the taskbar chrome and a baked-in accent all at
+ * once. `mode` decides whether the `.dark` class is applied so that light or
+ * dark surfaces (and Tailwind `dark:` variants) stay readable no matter which
+ * theme is picked — that's what keeps text visible on dark wallpapers.
+ */
+export type ThemeId = "paper" | "olive" | "sunset" | "slate" | "midnight" | "ocean";
+
+export interface ThemeDef {
+  id: ThemeId;
+  label: string;
+  mode: "light" | "dark";
+  /** Baked-in accent for this theme (hex). */
+  accent: string;
+}
+
+export const THEMES: ThemeDef[] = [
+  { id: "paper", label: "Paper", mode: "light", accent: "#f08a24" },
+  { id: "olive", label: "Olive", mode: "light", accent: "#c2683c" },
+  { id: "sunset", label: "Sunset", mode: "light", accent: "#d94f6a" },
+  { id: "slate", label: "Slate", mode: "dark", accent: "#7aa2d6" },
+  { id: "midnight", label: "Midnight", mode: "dark", accent: "#4bb6d9" },
+  { id: "ocean", label: "Ocean", mode: "dark", accent: "#e9b44c" },
 ];
 
+export const THEME_MAP: Record<ThemeId, ThemeDef> = THEMES.reduce(
+  (acc, t) => ((acc[t.id] = t), acc),
+  {} as Record<ThemeId, ThemeDef>,
+);
+
+export function getTheme(id: ThemeId): ThemeDef {
+  return THEME_MAP[id] ?? THEME_MAP.paper;
+}
+
 interface SettingsStore {
-  theme: ThemeMode;
-  wallpaper: WallpaperKind;
-  accent: string;
+  theme: ThemeId;
   booted: boolean;
   soundsMuted: boolean;
   iconSize: IconSize;
   cursorStyle: CursorStyle;
   animSpeed: AnimSpeed;
   parallax: boolean;
-  setTheme: (t: ThemeMode) => void;
-  setWallpaper: (w: WallpaperKind) => void;
-  setAccent: (c: string) => void;
+  setTheme: (t: ThemeId) => void;
   setBooted: (b: boolean) => void;
   toggleSounds: () => void;
   setIconSize: (s: IconSize) => void;
@@ -272,9 +299,7 @@ interface SettingsStore {
 export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
-      theme: "light",
-      wallpaper: "paper",
-      accent: "#f08a24",
+      theme: "paper",
       booted: false,
       soundsMuted: true,
       iconSize: "md",
@@ -282,8 +307,6 @@ export const useSettingsStore = create<SettingsStore>()(
       animSpeed: "normal",
       parallax: true,
       setTheme: (theme) => set({ theme }),
-      setWallpaper: (wallpaper) => set({ wallpaper }),
-      setAccent: (accent) => set({ accent }),
       setBooted: (booted) => set({ booted }),
       toggleSounds: () => set((s) => ({ soundsMuted: !s.soundsMuted })),
       setIconSize: (iconSize) => set({ iconSize }),
@@ -291,6 +314,6 @@ export const useSettingsStore = create<SettingsStore>()(
       setAnimSpeed: (animSpeed) => set({ animSpeed }),
       toggleParallax: () => set((s) => ({ parallax: !s.parallax })),
     }),
-    { name: "azharos-settings-v2" },
+    { name: "azharos-settings-v3" },
   ),
 );

@@ -31,5 +31,5 @@ export const APP_META: Record<AppId, { label: string; hint: string }> = {
   contact: { label: "Contact", hint: "Send a message" },
   resume: { label: "Resume", hint: "Experience & education" },
   terminal: { label: "Terminal", hint: "Try `help`" },
-  settings: { label: "Settings", hint: "Theme & wallpaper" },
+  settings: { label: "Settings", hint: "Theme & appearance" },
 };

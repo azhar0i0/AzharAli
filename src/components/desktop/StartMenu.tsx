@@ -14,17 +14,18 @@ export function StartMenu({ open, onClose }: { open: boolean; onClose: () => voi
         <>
           <div className="absolute inset-0 z-[9998]" onClick={onClose} />
           <motion.div
+            data-chrome
             initial={{ opacity: 0, y: 8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.14 }}
-            className="absolute bottom-14 left-2 z-[9999] w-72 overflow-hidden rounded-xl border border-olive-dark/70 bg-card window-shadow"
+            className="absolute bottom-14 left-2 z-[9999] w-72 overflow-hidden rounded-lg border border-[var(--chrome-border)] bg-card window-shadow"
           >
-            <div className="flex items-center gap-2 border-b border-paper-line bg-olive-dark px-3 py-2 text-paper">
-              <span className="grid h-7 w-7 place-items-center rounded-md bg-orange font-bold text-white">A</span>
+            <div className="flex items-center gap-2 border-b border-[var(--chrome-border)] bg-[var(--chrome)] px-3 py-2 text-[var(--chrome-fg)]">
+              <span className="grid h-7 w-7 place-items-center rounded-md bg-[var(--chrome-active)] font-bold text-white">A</span>
               <div className="leading-tight">
-                <div className="text-sm font-semibold">Azhar Ali</div>
-                <div className="font-mono text-[10px] text-paper/70">@azharisworking</div>
+                <div className="font-pixel text-base tracking-wide">Azhar Ali</div>
+                <div className="font-mono text-[10px] text-[var(--chrome-fg-dim)]">@azharisworking</div>
               </div>
             </div>
             <ul className="max-h-72 overflow-y-auto p-1 scrollbar-thin">
@@ -43,23 +44,23 @@ export function StartMenu({ open, onClose }: { open: boolean; onClose: () => voi
                 </li>
               ))}
             </ul>
-            <div className="grid grid-cols-4 gap-1 border-t border-paper-line bg-secondary/60 p-2 text-ink-soft">
+            <div className="grid grid-cols-4 gap-1 border-t border-[var(--chrome-border)] bg-secondary/60 p-2 text-ink-soft">
               <StartLink href="https://github.com/azhar0i0" title="GitHub"><FaGithub /></StartLink>
               <StartLink href="https://www.linkedin.com/in/skibidi-azhar" title="LinkedIn"><FaLinkedin /></StartLink>
               <StartLink href="mailto:azharisworking@gmail.com" title="Email"><FaEnvelope /></StartLink>
               <button
                 title="Download vCard"
                 onClick={() => downloadVCard()}
-                className="grid h-9 place-items-center rounded-md hover:bg-paper hover:text-olive-dark"
+                className="grid h-9 place-items-center rounded-md transition hover:bg-[var(--chrome-active)] hover:text-white"
               >
                 <FaFileDownload />
               </button>
             </div>
             <button
               onClick={() => { onClose(); shutdownAnim(); }}
-              className="flex w-full items-center gap-2 border-t border-paper-line bg-olive-dark/95 px-3 py-2 text-sm text-paper hover:bg-olive-dark cursor-pointer"
+              className="flex w-full items-center gap-2 border-t border-[var(--chrome-border)] bg-[var(--chrome)] px-3 py-2 text-sm text-[var(--chrome-fg)] hover:brightness-125 cursor-pointer"
             >
-              <FaPowerOff className="text-orange" /> Restart System
+              <FaPowerOff style={{ color: "var(--chrome-active)" }} /> Restart System
             </button>
           </motion.div>
         </>
@@ -75,7 +76,7 @@ function StartLink({ href, title, children }: { href: string; title: string; chi
       target={href.startsWith("http") ? "_blank" : undefined}
       rel="noreferrer"
       title={title}
-      className="grid h-9 place-items-center rounded-md hover:bg-paper hover:text-olive-dark"
+      className="grid h-9 place-items-center rounded-md transition hover:bg-[var(--chrome-active)] hover:text-white"
     >
       {children}
     </a>

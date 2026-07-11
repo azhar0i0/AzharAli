@@ -1,11 +1,10 @@
 import {
-  ACCENT_PRESETS,
+  THEMES,
   useIconStore,
   useSettingsStore,
   type AnimSpeed,
   type CursorStyle,
   type IconSize,
-  type WallpaperKind,
 } from "@/lib/desktop/store";
 import {
   FaVolumeMute,
@@ -13,20 +12,9 @@ import {
   FaCheck,
 } from "react-icons/fa";
 
-const WALLPAPERS: { id: WallpaperKind; label: string; preview: string }[] = [
-  { id: "paper", label: "Paper Grid", preview: "wall-paper" },
-  { id: "olive", label: "Olive Field", preview: "wall-olive" },
-  { id: "night", label: "Midnight", preview: "wall-night" },
-  { id: "sunset", label: "Sunset", preview: "wall-sunset" },
-  { id: "ocean", label: "Ocean", preview: "wall-ocean" },
-  { id: "graphite", label: "Graphite", preview: "wall-graphite" },
-];
-
 export function SettingsApp() {
   const {
     theme, setTheme,
-    wallpaper, setWallpaper,
-    accent, setAccent,
     soundsMuted, toggleSounds,
     iconSize, setIconSize,
     cursorStyle, setCursorStyle,
@@ -37,66 +25,45 @@ export function SettingsApp() {
 
   return (
     <div className="h-full overflow-y-auto p-6 scrollbar-thin">
-      <h1 className="text-2xl font-bold text-olive-dark">Settings</h1>
+      <h1 className="font-pixel text-3xl tracking-wide text-olive-dark">Settings</h1>
       <p className="text-sm text-ink-soft">Personalize your AzharOS experience.</p>
 
       <Group title="Theme">
-        <div className="flex gap-2">
-          {(["light", "dark"] as const).map((t) => (
-            <Chip key={t} active={theme === t} onClick={() => setTheme(t)} label={t} />
-          ))}
-        </div>
-      </Group>
-
-      <Group title="Accent Color">
-        <div className="flex flex-wrap gap-2">
-          {ACCENT_PRESETS.map((a) => (
-            <button
-              key={a.id}
-              type="button"
-              onClick={() => setAccent(a.color)}
-              title={a.label}
-              className={`relative h-9 w-9 cursor-pointer rounded-full border-2 transition ${
-                accent.toLowerCase() === a.color.toLowerCase()
-                  ? "border-ink scale-110"
-                  : "border-paper-line hover:scale-105"
-              }`}
-              style={{ background: a.color }}
-              aria-label={`Accent ${a.label}`}
-            >
-              {accent.toLowerCase() === a.color.toLowerCase() && (
-                <FaCheck className="absolute inset-0 m-auto text-white drop-shadow" />
-              )}
-            </button>
-          ))}
-          <label className="ml-2 flex cursor-pointer items-center gap-2 rounded-md border border-paper-line bg-card px-2 py-1 text-xs">
-            Custom
-            <input
-              type="color"
-              value={accent}
-              onChange={(e) => setAccent(e.target.value)}
-              className="h-6 w-8 cursor-pointer border-0 bg-transparent p-0"
-            />
-          </label>
-        </div>
-      </Group>
-
-      <Group title="Wallpaper">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {WALLPAPERS.map((w) => (
+          {THEMES.map((t) => (
             <button
-              key={w.id}
+              key={t.id}
               type="button"
-              onClick={() => setWallpaper(w.id)}
-              className={`cursor-pointer overflow-hidden rounded-md border transition ${
-                wallpaper === w.id ? "border-orange ring-2 ring-orange/30" : "border-paper-line hover:border-olive-dark/60"
+              onClick={() => setTheme(t.id)}
+              className={`cursor-pointer overflow-hidden rounded-md border text-left transition ${
+                theme === t.id
+                  ? "border-orange ring-2 ring-orange/30"
+                  : "border-paper-line hover:border-olive-dark/60"
               }`}
+              aria-label={`Theme ${t.label}`}
             >
-              <div className={`h-16 ${w.preview}`} />
-              <div className="bg-card p-1.5 text-center text-xs">{w.label}</div>
+              {/* Live preview: the theme class resolves --wallpaper for this swatch */}
+              <div className={`theme-${t.id} relative h-16`}>
+                <div className="desktop-wallpaper absolute inset-0" />
+                <div className="pixel-grid absolute inset-0" />
+                <span
+                  className="absolute bottom-1 right-1 h-4 w-4 rounded-sm ring-1 ring-black/20"
+                  style={{ background: t.accent }}
+                />
+                {theme === t.id && (
+                  <FaCheck className="absolute left-1 top-1 text-white drop-shadow" />
+                )}
+              </div>
+              <div className="flex items-center justify-between bg-card px-2 py-1.5">
+                <span className="font-pixel text-sm tracking-wide">{t.label}</span>
+                <span className="text-[10px] uppercase tracking-wider text-ink-soft">{t.mode}</span>
+              </div>
             </button>
           ))}
         </div>
+        <p className="mt-2 text-xs text-ink-soft">
+          Each theme sets its own wallpaper, text colors, taskbar and accent — everything stays readable.
+        </p>
       </Group>
 
       <Group title="Icon Size">

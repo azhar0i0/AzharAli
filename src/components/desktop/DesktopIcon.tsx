@@ -120,7 +120,7 @@ export function DesktopIcon({
     >
       <AppIcon appId={appId} size={S.icon} />
       <span
-        className={`max-w-full break-words rounded-sm px-1 ${S.font} font-medium leading-tight text-ink drop-shadow-[0_1px_0_rgba(255,255,255,0.6)] dark:text-paper dark:drop-shadow-[0_1px_0_rgba(0,0,0,0.6)]`}
+        className={`desktop-label max-w-full break-words rounded-sm px-1 ${S.font} leading-tight`}
       >
         {label}
       </span>

@@ -50,7 +50,8 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  /* Crisp, pixel-art corners across the whole OS. */
+  --radius: 0.1875rem;
 
   --background: #f7f4e8;
   --foreground: #2b2a20;
@@ -88,6 +89,24 @@
 
   --anim-scale: 1;
   --accent-rgb: 240 138 36;
+
+  /* ---- Theme surfaces (overridden per .theme-*) ---- */
+  /* Full-screen desktop background. */
+  --wallpaper:
+    radial-gradient(1200px 720px at 18% 12%, rgba(255, 255, 255, 0.55), transparent 60%),
+    linear-gradient(160deg, #f9f6ec 0%, #f2eedd 55%, #ece7d2 100%);
+  /* Pixel graph-paper grid drawn over the wallpaper. */
+  --grid-line: rgba(45, 47, 30, 0.09);
+  /* Desktop icon labels / hints — always contrasts the wallpaper. */
+  --desktop-fg: #2b2a20;
+  --desktop-fg-shadow: rgba(255, 255, 255, 0.65);
+  /* Chrome = taskbar, window title bars, start-menu header/footer. */
+  --chrome: #3d4a2a;
+  --chrome-raised: #2f3a20;
+  --chrome-fg: #f7f4e8;
+  --chrome-fg-dim: rgba(247, 244, 232, 0.6);
+  --chrome-border: rgba(31, 40, 22, 0.7);
+  --chrome-active: var(--accent);
 }
 
 .dark {
@@ -124,6 +143,19 @@
   --folder: #d4a935;
   --folder-tab: #a67f22;
   --crt: rgba(255, 255, 255, 0.02);
+
+  --wallpaper:
+    radial-gradient(1200px 720px at 22% 15%, rgba(255, 255, 255, 0.06), transparent 60%),
+    linear-gradient(160deg, #202318 0%, #191c15 55%, #131610 100%);
+  --grid-line: rgba(236, 232, 212, 0.06);
+  --desktop-fg: #ece8d4;
+  --desktop-fg-shadow: rgba(0, 0, 0, 0.7);
+  --chrome: #22261b;
+  --chrome-raised: #2c3123;
+  --chrome-fg: #ece8d4;
+  --chrome-fg-dim: rgba(236, 232, 212, 0.55);
+  --chrome-border: rgba(0, 0, 0, 0.5);
+  --chrome-active: var(--accent);
 }
 
 @layer base {
@@ -156,66 +188,250 @@
 }
 
 
-/* ============ Wallpapers ============ */
-.wall-paper {
-  background-color: #f7f4e8;
+/* ============ Themes ============ */
+/*
+ * Each theme re-skins the desktop as a whole: wallpaper, the palette tints that
+ * bleed into windows, the chrome (taskbar / title bars) and a baked accent.
+ * Dark themes are always paired with the `.dark` class in JS so surface
+ * contrast and Tailwind `dark:` variants resolve correctly.
+ */
+
+/* ---- Light themes ---- */
+.theme-paper {
+  --accent: #f08a24;
+  --ring: #f08a24;
+  --orange: #f08a24;
+  --wallpaper:
+    radial-gradient(1200px 720px at 18% 12%, rgba(255, 255, 255, 0.55), transparent 60%),
+    linear-gradient(160deg, #f9f6ec 0%, #f2eedd 55%, #ece7d2 100%);
+  --grid-line: rgba(45, 47, 30, 0.1);
+  --desktop-fg: #2b2a20;
+  --desktop-fg-shadow: rgba(255, 255, 255, 0.65);
+  --chrome: #3d4a2a;
+  --chrome-raised: #2f3a20;
+  --chrome-fg: #f7f4e8;
+  --chrome-fg-dim: rgba(247, 244, 232, 0.6);
+  --chrome-border: rgba(31, 40, 22, 0.7);
+}
+
+.theme-olive {
+  --background: #eef0e2;
+  --card: #f4f5ea;
+  --popover: #f4f5ea;
+  --secondary: #e2e6cf;
+  --muted: #e2e6cf;
+  --muted-foreground: #5f6a45;
+  --border: #cbd2b0;
+  --input: #cbd2b0;
+  --accent: #c2683c;
+  --accent-foreground: #ffffff;
+  --ring: #c2683c;
+  --orange: #c2683c;
+  --primary: #46592a;
+  --paper: #eef0e2;
+  --paper-line: #cbd2b0;
+  --olive: #6b7a3f;
+  --olive-dark: #3d4a2a;
+  --wallpaper:
+    radial-gradient(1100px 700px at 20% 12%, rgba(255, 255, 255, 0.4), transparent 60%),
+    radial-gradient(900px 600px at 85% 95%, rgba(70, 89, 42, 0.18), transparent 60%),
+    linear-gradient(160deg, #e9ecdb 0%, #dfe4cd 55%, #d3dabb 100%);
+  --grid-line: rgba(61, 74, 42, 0.1);
+  --desktop-fg: #313a1f;
+  --desktop-fg-shadow: rgba(255, 255, 255, 0.6);
+  --chrome: #3d4a2a;
+  --chrome-raised: #2f3a20;
+  --chrome-fg: #f2f4e6;
+  --chrome-fg-dim: rgba(242, 244, 230, 0.6);
+  --chrome-border: rgba(31, 40, 22, 0.7);
+}
+
+.theme-sunset {
+  --background: #fbeee6;
+  --foreground: #3a2530;
+  --card: #fdf4ee;
+  --card-foreground: #3a2530;
+  --popover: #fdf4ee;
+  --popover-foreground: #3a2530;
+  --secondary: #f6e2d6;
+  --secondary-foreground: #3a2530;
+  --muted: #f6e2d6;
+  --muted-foreground: #8a5f68;
+  --border: #ecccbd;
+  --input: #ecccbd;
+  --accent: #d94f6a;
+  --accent-foreground: #ffffff;
+  --ring: #d94f6a;
+  --orange: #d94f6a;
+  --primary: #a6394f;
+  --primary-foreground: #fdf4ee;
+  --paper: #fbeee6;
+  --paper-line: #ecccbd;
+  --ink: #3a2530;
+  --ink-soft: #8a5f68;
+  --olive: #c76b52;
+  --olive-dark: #8a3f4f;
+  --wallpaper:
+    radial-gradient(900px 620px at 80% 8%, rgba(255, 214, 165, 0.7), transparent 60%),
+    radial-gradient(1000px 700px at 12% 100%, rgba(190, 80, 120, 0.35), transparent 62%),
+    linear-gradient(165deg, #ffe4cf 0%, #f8c6b0 48%, #e79ba0 100%);
+  --grid-line: rgba(120, 50, 70, 0.09);
+  --desktop-fg: #3a2530;
+  --desktop-fg-shadow: rgba(255, 255, 255, 0.6);
+  --chrome: #8a3f4f;
+  --chrome-raised: #74303f;
+  --chrome-fg: #fdeee6;
+  --chrome-fg-dim: rgba(253, 238, 230, 0.6);
+  --chrome-border: rgba(90, 30, 45, 0.7);
+}
+
+/* ---- Dark themes (paired with `.dark`) ---- */
+.theme-slate {
+  --background: #1b1e24;
+  --card: #23272f;
+  --popover: #23272f;
+  --secondary: #2b2f38;
+  --muted: #2b2f38;
+  --muted-foreground: #9aa3b2;
+  --border: #383d48;
+  --input: #383d48;
+  --accent: #7aa2d6;
+  --accent-foreground: #10131a;
+  --ring: #7aa2d6;
+  --orange: #7aa2d6;
+  --primary: #a9c2e6;
+  --paper: #1b1e24;
+  --paper-line: #2b2f38;
+  --ink: #e7eaf0;
+  --ink-soft: #9aa3b2;
+  --olive: #7f93b3;
+  /* olive-dark doubles as heading/emphasis text — keep it light on dark themes */
+  --olive-dark: #b7cbe8;
+  --olive-light: #a9c2e6;
+  --wallpaper:
+    radial-gradient(1200px 760px at 28% 14%, rgba(122, 162, 214, 0.14), transparent 60%),
+    linear-gradient(150deg, #23272f 0%, #1b1e24 55%, #141619 100%);
+  --grid-line: rgba(200, 214, 236, 0.05);
+  --desktop-fg: #e7eaf0;
+  --desktop-fg-shadow: rgba(0, 0, 0, 0.7);
+  --chrome: #171a20;
+  --chrome-raised: #262b34;
+  --chrome-fg: #e7eaf0;
+  --chrome-fg-dim: rgba(231, 234, 240, 0.55);
+  --chrome-border: rgba(0, 0, 0, 0.55);
+}
+
+.theme-midnight {
+  --background: #0f1626;
+  --foreground: #dfe7f5;
+  --card: #172034;
+  --card-foreground: #dfe7f5;
+  --popover: #172034;
+  --popover-foreground: #dfe7f5;
+  --secondary: #1d2842;
+  --secondary-foreground: #dfe7f5;
+  --muted: #1d2842;
+  --muted-foreground: #8b9bc0;
+  --border: #263353;
+  --input: #263353;
+  --accent: #4bb6d9;
+  --accent-foreground: #06121a;
+  --ring: #4bb6d9;
+  --orange: #4bb6d9;
+  --primary: #8fd3ea;
+  --primary-foreground: #0f1626;
+  --paper: #0f1626;
+  --paper-line: #1d2842;
+  --ink: #dfe7f5;
+  --ink-soft: #8b9bc0;
+  --olive: #5f7bb0;
+  /* olive-dark doubles as heading/emphasis text — keep it light on dark themes */
+  --olive-dark: #a9d8ec;
+  --olive-light: #8fd3ea;
+  --wallpaper:
+    radial-gradient(1400px 820px at 70% 18%, rgba(75, 182, 217, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 18% 88%, rgba(120, 90, 220, 0.14), transparent 64%),
+    linear-gradient(160deg, #131c30 0%, #0f1626 52%, #0a1120 100%);
+  --grid-line: rgba(150, 190, 240, 0.05);
+  --desktop-fg: #e6edfa;
+  --desktop-fg-shadow: rgba(0, 0, 0, 0.75);
+  --chrome: #0c1322;
+  --chrome-raised: #1a2440;
+  --chrome-fg: #e6edfa;
+  --chrome-fg-dim: rgba(230, 237, 250, 0.55);
+  --chrome-border: rgba(0, 0, 0, 0.55);
+}
+
+.theme-ocean {
+  --background: #08222e;
+  --foreground: #dcefee;
+  --card: #0e2c3a;
+  --card-foreground: #dcefee;
+  --popover: #0e2c3a;
+  --popover-foreground: #dcefee;
+  --secondary: #123847;
+  --secondary-foreground: #dcefee;
+  --muted: #123847;
+  --muted-foreground: #86adb2;
+  --border: #1c4655;
+  --input: #1c4655;
+  --accent: #e9b44c;
+  --accent-foreground: #10130a;
+  --ring: #e9b44c;
+  --orange: #e9b44c;
+  --primary: #7fd6cf;
+  --primary-foreground: #08222e;
+  --paper: #08222e;
+  --paper-line: #123847;
+  --ink: #dcefee;
+  --ink-soft: #86adb2;
+  --olive: #4a8f89;
+  /* olive-dark doubles as heading/emphasis text — keep it light on dark themes */
+  --olive-dark: #a7ddd6;
+  --olive-light: #7fd6cf;
+  --wallpaper:
+    radial-gradient(1100px 720px at 24% 14%, rgba(120, 210, 220, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 82% 92%, rgba(233, 180, 76, 0.1), transparent 62%),
+    linear-gradient(165deg, #0c303f 0%, #082533 52%, #05161f 100%);
+  --grid-line: rgba(150, 220, 220, 0.05);
+  --desktop-fg: #e2f2f0;
+  --desktop-fg-shadow: rgba(0, 0, 0, 0.75);
+  --chrome: #061b26;
+  --chrome-raised: #103340;
+  --chrome-fg: #e2f2f0;
+  --chrome-fg-dim: rgba(226, 242, 240, 0.55);
+  --chrome-border: rgba(0, 0, 0, 0.55);
+}
+
+/* ---- Desktop surface ---- */
+.desktop-wallpaper {
+  background: var(--wallpaper);
+  background-size: cover;
+  image-rendering: pixelated;
+}
+
+/* Chunky pixel graph-paper grid layered over every wallpaper. */
+.pixel-grid {
   background-image:
-    linear-gradient(rgba(45, 47, 30, 0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45, 47, 30, 0.09) 1px, transparent 1px);
-  background-size: 28px 28px;
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
   background-position: -1px -1px;
 }
-.dark .wall-paper {
-  background-color: #1a1c17;
-  background-image:
-    linear-gradient(rgba(236, 232, 212, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(236, 232, 212, 0.06) 1px, transparent 1px);
+
+/* Readable desktop icon labels / hints on any wallpaper, with a pixel face. */
+.desktop-label {
+  color: var(--desktop-fg);
+  text-shadow: 1px 1px 0 var(--desktop-fg-shadow);
+  font-family: var(--font-pixel);
+  letter-spacing: 0.02em;
 }
 
-.wall-olive {
-  background:
-    radial-gradient(1200px 700px at 20% 15%, rgba(255, 255, 255, 0.15), transparent 60%),
-    radial-gradient(900px 600px at 85% 90%, rgba(0, 0, 0, 0.35), transparent 60%),
-    linear-gradient(135deg, #4d5a2e 0%, #6b7a3f 45%, #3d4a2a 100%);
-}
-
-.wall-night {
-  background:
-    radial-gradient(1400px 800px at 70% 20%, rgba(120, 160, 220, 0.18), transparent 60%),
-    radial-gradient(1000px 700px at 20% 85%, rgba(240, 138, 36, 0.12), transparent 65%),
-    linear-gradient(160deg, #0d1220 0%, #131a2c 50%, #08101f 100%);
-}
-
-.wall-sunset {
-  background:
-    radial-gradient(900px 600px at 80% 10%, rgba(255, 220, 150, 0.55), transparent 60%),
-    radial-gradient(900px 600px at 10% 100%, rgba(120, 40, 90, 0.55), transparent 60%),
-    linear-gradient(180deg, #ffb26b 0%, #f27a5b 40%, #7c3968 100%);
-}
-
-.wall-ocean {
-  background:
-    radial-gradient(1000px 700px at 25% 15%, rgba(140, 220, 240, 0.35), transparent 60%),
-    radial-gradient(1000px 700px at 80% 90%, rgba(20, 40, 80, 0.5), transparent 60%),
-    linear-gradient(180deg, #0a3f6b 0%, #0b5b8c 45%, #062842 100%);
-}
-
-.wall-graphite {
-  background:
-    radial-gradient(1200px 700px at 30% 20%, rgba(255, 255, 255, 0.06), transparent 60%),
-    linear-gradient(135deg, #1e2028 0%, #2a2d38 55%, #14161c 100%);
-  background-color: #1e2028;
-  position: relative;
-}
-.wall-graphite::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-  pointer-events: none;
+/* Hard-edged retro drop shadow for chrome (taskbar, start menu). */
+@utility pixel-shadow {
+  box-shadow:
+    0 -2px 0 rgba(0, 0, 0, 0.12),
+    0 -4px 14px rgba(0, 0, 0, 0.28);
 }
 
 /* ============ Utilities ============ */

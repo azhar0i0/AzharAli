@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSettingsStore, useWindowStore } from "@/lib/desktop/store";
+import { getTheme, THEMES, useSettingsStore, useWindowStore } from "@/lib/desktop/store";
 
 type Line = { kind: "in" | "out" | "sys" | "err"; text: string };
 
@@ -64,7 +64,7 @@ export function TerminalApp() {
       "  linkedin              open LinkedIn profile",
       "  email                 open mail client",
       "  neofetch              system info",
-      "  theme <light|dark>    change theme",
+      "  theme <name>          change theme (see `theme` for options)",
       "  date                  current date/time",
       "  whoami                current user",
       "  echo <text>           print text",
@@ -108,9 +108,10 @@ export function TerminalApp() {
       if (w) useWindowStore.getState().close(w.id);
     },
     theme: (args) => {
-      const t = args[0];
-      if (t === "light" || t === "dark") { setTheme(t); push(`Theme set to ${t}.`); }
-      else push("usage: theme <light|dark>", "err");
+      const t = args[0]?.toLowerCase();
+      const match = THEMES.find((x) => x.id === t);
+      if (match) { setTheme(match.id); push(`Theme set to ${match.label}.`); }
+      else push(`usage: theme <${THEMES.map((x) => x.id).join("|")}>`, "err");
     },
     neofetch: () => pushMany([
       "        _         _                     azhar@AzharOS",
@@ -119,7 +120,7 @@ export function TerminalApp() {
       "     /_/ \\_\\___/_||_/_\\_\\__,_|_|         Shell   react-sh",
       "                                         Editor  VS Code",
       "                                         Stack   React · Next · TS · Tailwind",
-      "                                         Theme   " + useSettingsStore.getState().theme,
+      "                                         Theme   " + getTheme(useSettingsStore.getState().theme).label,
       "                                         Uptime  since 2022",
     ], "sys"),
   };

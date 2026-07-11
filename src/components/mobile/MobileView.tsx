@@ -17,7 +17,9 @@ import {
 } from "react-icons/fa";
 import type { ReactNode } from "react";
 import avatar from "@/assets/avatar.jpg";
-import { useSettingsStore } from "@/lib/desktop/store";
+import { getTheme, THEMES, useSettingsStore } from "@/lib/desktop/store";
+
+const THEME_CLASSES = THEMES.map((t) => `theme-${t.id}`);
 import { ProjectsApp } from "@/components/apps/ProjectsApp";
 import { BootScreen } from "@/components/desktop/BootScreen";
 
@@ -205,11 +207,15 @@ export function MobileView() {
   const [tab, setTab] = useState<Tab>("me");
   const scrollerRef = useRef<HTMLDivElement>(null);
   const theme = useSettingsStore((s) => s.theme);
+  const themeDef = getTheme(theme);
 
   // Keep the persisted theme working without the desktop shell mounted.
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    const root = document.documentElement;
+    root.classList.remove(...THEME_CLASSES);
+    root.classList.add(`theme-${themeDef.id}`);
+    root.classList.toggle("dark", themeDef.mode === "dark");
+  }, [themeDef.id, themeDef.mode]);
 
   const goToSection = (id: string) => {
     setTab("me");

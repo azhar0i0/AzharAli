@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useIconStore, useSettingsStore, useWindowStore } from "@/lib/desktop/store";
+import { getTheme, THEMES, useIconStore, useSettingsStore, useWindowStore } from "@/lib/desktop/store";
 import { DesktopIcon } from "./DesktopIcon";
 import { Window } from "./Window";
 import { Taskbar } from "./Taskbar";
@@ -8,14 +8,7 @@ import { ContextMenu } from "./ContextMenu";
 import { CommandPalette } from "./CommandPalette";
 import { APP_META } from "@/lib/desktop/apps";
 
-const WALL_CLASS: Record<string, string> = {
-  paper: "wall-paper",
-  olive: "wall-olive",
-  night: "wall-night",
-  sunset: "wall-sunset",
-  ocean: "wall-ocean",
-  graphite: "wall-graphite",
-};
+const THEME_CLASSES = THEMES.map((t) => `theme-${t.id}`);
 
 function hexToRgb(hex: string) {
   const h = hex.replace("#", "");
@@ -35,18 +28,22 @@ export function Desktop() {
   const { icons } = useIconStore();
   const windows = useWindowStore((s) => s.windows);
   const { cycleNext, close, activeId, minimize } = useWindowStore();
-  const { theme, wallpaper, accent, cursorStyle, animSpeed, parallax } = useSettingsStore();
+  const { theme, cursorStyle, animSpeed, parallax } = useSettingsStore();
+  const themeDef = getTheme(theme);
+  const accent = themeDef.accent;
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const parallaxRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const [hoverTarget, setHoverTarget] = useState<"idle" | "interactive">("idle");
 
-  // Theme
+  // Theme — apply the theme class + dark mode so wallpaper, chrome and text move together
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
-  }, [theme]);
+    root.classList.remove(...THEME_CLASSES);
+    root.classList.add(`theme-${themeDef.id}`);
+    root.classList.toggle("dark", themeDef.mode === "dark");
+  }, [themeDef.id, themeDef.mode]);
 
   // Accent
   useEffect(() => {
@@ -114,26 +111,27 @@ export function Desktop() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [parallax, cursorStyle]);
 
-  const wallClass = WALL_CLASS[wallpaper] ?? "wall-paper";
-
   return (
     <div
       className="relative h-dvh w-screen overflow-hidden"
       onContextMenu={(e) => {
+        // Desktop menu only opens on the desktop surface — never inside a window,
+        // the taskbar or other chrome. Elsewhere we leave native behavior alone.
+        const target = e.target as HTMLElement | null;
+        if (target?.closest("[data-window],[data-chrome]")) return;
         e.preventDefault();
-        const pad = 12;
-        const x = Math.min(e.clientX, window.innerWidth - 240 - pad);
-        const y = Math.min(e.clientY, window.innerHeight - 340 - pad);
-        setMenu({ x, y });
+        setMenu({ x: e.clientX, y: e.clientY });
       }}
       onClick={() => setMenu(null)}
     >
       {/* Parallax wallpaper layer */}
       <div
         ref={parallaxRef}
-        className={`absolute inset-[-20px] transition-transform duration-[400ms] ease-out ${wallClass}`}
+        className="desktop-wallpaper absolute inset-[-20px] transition-transform duration-[400ms] ease-out"
         style={{ willChange: "transform" }}
       />
+      {/* Pixel graph-paper grid */}
+      <div className="pixel-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.18))]" />
 
       {/* Icons layer */}
@@ -149,10 +147,14 @@ export function Desktop() {
         ))}
       </div>
 
-      {/* Windows */}
-      {windows.map((w) => (
-        <Window key={w.id} w={w} />
-      ))}
+      {/* Window work area — bounded above the taskbar so windows can't slide
+          under it. Pointer-events pass through the empty area to the desktop;
+          each window re-enables them for itself. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 bottom-12">
+        {windows.map((w) => (
+          <Window key={w.id} w={w} />
+        ))}
+      </div>
 
       {/* Hint */}
       {windows.length === 0 && (
