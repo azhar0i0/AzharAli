@@ -1,82 +1,79 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSettingsStore } from "@/lib/desktop/store";
+import { EASE_SPRING } from "@/lib/motion";
 
-const LINES = [
-  "AzharOS BIOS v1.0",
-  "Detecting devices... OK",
-  "Loading kernel modules...",
-  "Mounting /home/azhar",
-  "Starting window manager...",
-  "Connecting to GitHub...",
-  "Loading portfolio...",
-  "Welcome, Azhar.",
-];
+// What actually happens while the desktop gets ready, in plain words.
+const STEPS = ["Loading workspace", "Fetching projects from GitHub", "Opening desktop"];
+const STEP_MS = 520;
 
+/**
+ * First-visit loading screen. Sits on the same wallpaper as the desktop so it
+ * hands off without a jarring cut, then fades away.
+ */
 export function BootScreen() {
   const setBooted = useSettingsStore((s) => s.setBooted);
   const booted = useSettingsStore((s) => s.booted);
   const [visible, setVisible] = useState(!booted);
-  const [idx, setIdx] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (!visible) return;
-    let i = 0;
-    const int = setInterval(() => {
-      i++;
-      setIdx((v) => Math.min(v + 1, LINES.length));
-      setProgress(Math.min(100, Math.round((i / LINES.length) * 100)));
-      if (i >= LINES.length) {
-        clearInterval(int);
-        setTimeout(() => {
-          setBooted(true);
-          setVisible(false);
-        }, 600);
-      }
-    }, 260);
-    return () => clearInterval(int);
+    const timers = STEPS.map((_, i) => setTimeout(() => setStep(i), i * STEP_MS));
+    timers.push(
+      setTimeout(() => {
+        setBooted(true);
+        setVisible(false);
+      }, STEPS.length * STEP_MS + 250),
+    );
+    return () => timers.forEach(clearTimeout);
   }, [visible, setBooted]);
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
+          role="status"
+          aria-live="polite"
+          aria-label="Loading portfolio"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[100000] flex items-center justify-center bg-black text-emerald-300"
+          transition={{ duration: 0.45, ease: EASE_SPRING }}
+          className="desktop-wallpaper fixed inset-0 z-(--z-boot) grid place-items-center px-6"
         >
-          <div className="w-[520px] max-w-[90vw] font-mono text-sm">
-            <div className="mb-4 flex items-center gap-3 text-orange">
-              <span className="grid h-8 w-8 place-items-center rounded-sm bg-orange font-bold text-black">A</span>
-              <div>
-                <div className="text-xl leading-tight">AzharOS</div>
-                <div className="text-[11px] text-emerald-500">v1.0 — 2026</div>
-              </div>
-            </div>
-            <div className="min-h-[220px] space-y-1">
-              {LINES.slice(0, idx).map((l, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex justify-between"
-                >
-                  <span>&gt; {l}</span>
-                  <span className="text-emerald-500">[ OK ]</span>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-sm border border-emerald-800 bg-emerald-950">
+          <div aria-hidden className="pixel-grid pointer-events-none absolute inset-0" />
+          <div aria-hidden className="grain pointer-events-none absolute inset-0" />
+
+          {/* Static on purpose: this is server-rendered, so it must be visible
+              before JavaScript loads (no opacity-0 entrance). */}
+          <div className="relative w-full max-w-xs text-center">
+            <h1 className="font-display text-5xl leading-none tracking-tight text-olive-dark">
+              Azhar Ali
+            </h1>
+            <p className="mt-2 text-sm text-ink-soft">Full-stack developer</p>
+
+            <div className="mx-auto mt-8 h-0.5 w-40 overflow-hidden rounded-full bg-paper-line">
               <motion.div
-                className="h-full bg-orange"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ ease: "easeOut" }}
+                className="h-full w-full origin-left rounded-full bg-orange"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: (STEPS.length * STEP_MS) / 1000, ease: [0.4, 0, 0.2, 1] }}
               />
             </div>
-            <div className="mt-1 text-right text-[11px] text-emerald-500">{progress}%</div>
+
+            <div className="relative mt-3 h-5 overflow-hidden text-xs text-ink-soft">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p
+                  key={step}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.22, ease: EASE_SPRING }}
+                >
+                  {STEPS[step]}
+                </motion.p>
+              </AnimatePresence>
+            </div>
           </div>
         </motion.div>
       )}

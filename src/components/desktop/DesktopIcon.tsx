@@ -113,7 +113,7 @@ export function DesktopIcon({
       style={{ left: pos.x, top: pos.y, touchAction: "none" }}
       animate={{ scale: dragging ? 1.06 : 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 28 }}
-      className={`absolute flex ${S.w} cursor-pointer flex-col items-center gap-1 rounded-md p-2 text-center focus:outline-none ${
+      className={`absolute flex ${S.w} cursor-pointer flex-col items-center gap-1 rounded-md p-2 text-center outline-none focus-visible:ring-2 focus-visible:ring-orange ${
         selected ? "bg-orange/20 ring-1 ring-orange/50" : "hover:bg-white/25 dark:hover:bg-white/5"
       }`}
       aria-label={`Open ${APP_META[appId].label}`}

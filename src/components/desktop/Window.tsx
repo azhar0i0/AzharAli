@@ -1,9 +1,9 @@
 import { Rnd } from "react-rnd";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaTimes, FaWindowMaximize, FaWindowMinimize } from "react-icons/fa";
+import { PiXBold, PiSquareBold, PiMinusBold } from "react-icons/pi";
 import { useWindowStore, type WindowState } from "@/lib/desktop/store";
 import { APP_COMPONENTS } from "@/lib/desktop/apps";
-import { AppIcon } from "./AppIcon";
+import { AppGlyph } from "./AppIcon";
 
 export function Window({ w }: { w: WindowState }) {
   const { focus, close, minimize, maximize, updateBounds, activeId } = useWindowStore();
@@ -37,37 +37,39 @@ export function Window({ w }: { w: WindowState }) {
       <AnimatePresence>
         <motion.div
           data-window
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.94, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96 }}
-          transition={{ duration: 0.18 }}
-          className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-[var(--chrome-border)] bg-card window-shadow"
+          transition={{ type: "spring", stiffness: 380, damping: 32, mass: 0.8 }}
+          className={`flex h-full w-full flex-col overflow-hidden rounded-lg border border-[var(--chrome-border)] shadow-[inset_0_1px_0_rgb(255_255_255/0.1)] transition-colors window-shadow ${
+            isActive ? "bg-[var(--chrome)]" : "bg-[var(--chrome-raised)]"
+          }`}
         >
           <div
             onDoubleClick={() => maximize(w.id)}
-            className={`window-drag-handle flex select-none items-center gap-2 border-b border-[var(--chrome-border)] px-3 py-1.5 text-xs ${
-              isActive
-                ? "bg-[var(--chrome)] text-[var(--chrome-fg)]"
-                : "bg-[var(--chrome-raised)] text-[var(--chrome-fg-dim)]"
+            className={`window-drag-handle flex select-none items-center gap-2 px-3 py-1.5 text-xs transition-colors ${
+              isActive ? "text-[var(--chrome-fg)]" : "text-[var(--chrome-fg-dim)]"
             }`}
           >
-            <span className="scale-90">
-              <AppIcon appId={w.appId} size={18} />
-            </span>
+            <AppGlyph
+              appId={w.appId}
+              size={14}
+              className={isActive ? "text-[var(--chrome-active)]" : ""}
+            />
             <span className="truncate font-mono">{w.title}</span>
             <div className="window-no-drag ml-auto flex items-center gap-1">
               <TitleBtn onClick={() => minimize(w.id)} label="Minimize">
-                <FaWindowMinimize className="text-[10px]" />
+                <PiMinusBold className="text-[10px]" />
               </TitleBtn>
               <TitleBtn onClick={() => maximize(w.id)} label="Maximize">
-                <FaWindowMaximize className="text-[10px]" />
+                <PiSquareBold className="text-[10px]" />
               </TitleBtn>
               <TitleBtn onClick={() => close(w.id)} label="Close" danger>
-                <FaTimes className="text-[10px]" />
+                <PiXBold className="text-[10px]" />
               </TitleBtn>
             </div>
           </div>
-          <div className="window-no-drag relative flex-1 overflow-hidden bg-card">
+          <div className="window-no-drag bezel-core relative mx-[3px] mb-[3px] flex-1 overflow-hidden bg-card">
             <Body />
           </div>
         </motion.div>
@@ -91,7 +93,7 @@ function TitleBtn({
     <button
       onClick={onClick}
       aria-label={label}
-      className={`grid h-5 w-6 place-items-center rounded-sm border border-[var(--chrome-border)] bg-[var(--chrome-raised)] text-[var(--chrome-fg)] transition hover:brightness-125 ${
+      className={`grid h-5 w-6 place-items-center rounded-sm border border-[var(--chrome-border)] bg-[var(--chrome-raised)] text-[var(--chrome-fg)] transition hover:brightness-125 active:translate-y-px ${
         danger ? "hover:bg-destructive hover:text-white hover:brightness-100" : ""
       }`}
     >

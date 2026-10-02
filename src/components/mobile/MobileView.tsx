@@ -1,37 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { reveal } from "@/lib/motion";
 import {
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaUser,
-  FaFolderOpen,
-  FaCode,
-  FaMobile,
-  FaServer,
-  FaPalette,
-  FaBolt,
-  FaFileDownload,
-} from "react-icons/fa";
+  PiGithubLogoFill,
+  PiLinkedinLogoFill,
+  PiEnvelopeSimple,
+  PiPhone,
+  PiMapPin,
+  PiUser,
+  PiFolderOpen,
+  PiDownloadSimple,
+} from "react-icons/pi";
 import type { ReactNode } from "react";
 import avatar from "@/assets/avatar.jpg";
 import { getTheme, THEMES, useSettingsStore } from "@/lib/desktop/store";
 
 const THEME_CLASSES = THEMES.map((t) => `theme-${t.id}`);
 import { ProjectsApp } from "@/components/apps/ProjectsApp";
+import { SkillMeter } from "@/components/apps/SkillMeter";
 import { BootScreen } from "@/components/desktop/BootScreen";
 
 /* ============================ data ============================ */
-
-const ROLES = [
-  "React Developer",
-  "Next.js Developer",
-  "Full Stack Developer",
-  "Frontend Engineer",
-  "Backend Engineer",
-];
 
 const TIMELINE = [
   {
@@ -89,6 +78,7 @@ const SKILL_GROUPS: { title: string; skills: Skill[] }[] = [
       { name: "Supabase", years: 1, level: 78 },
       { name: "Firebase", years: 2, level: 76 },
       { name: "Django", years: 1, level: 65 },
+      { name: "WordPress", years: 2, level: 80 },
     ],
   },
   {
@@ -109,41 +99,40 @@ const SKILL_GROUPS: { title: string; skills: Skill[] }[] = [
   },
 ];
 
-const SERVICES: { icon: ReactNode; title: string; desc: string; tags: string[] }[] = [
+const SERVICES: { title: string; desc: string; tags: string[] }[] = [
   {
-    icon: <FaCode />,
-    title: "Web Development",
+    title: "Web development",
     desc: "Modern, fast, accessible websites and web apps built with the React ecosystem.",
     tags: ["React", "Next.js", "Tailwind"],
   },
   {
-    icon: <FaMobile />,
-    title: "App Development",
+    title: "App development",
     desc: "Cross-platform mobile experiences that feel native on iOS and Android.",
     tags: ["React Native"],
   },
   {
-    icon: <FaServer />,
-    title: "Backend Development",
+    title: "Backend development",
     desc: "APIs, auth, databases, real-time — all the plumbing that keeps apps alive.",
     tags: ["Node.js", "Django", "Firebase"],
   },
   {
-    icon: <FaPalette />,
-    title: "UI Design",
+    title: "WordPress sites",
+    desc: "Business sites and blogs on WordPress, set up so you can update pages and posts yourself.",
+    tags: ["WordPress"],
+  },
+  {
+    title: "UI design",
     desc: "Design systems and interfaces that look great and stay consistent as you scale.",
     tags: ["Figma"],
   },
   {
-    icon: <FaBolt />,
     title: "Performance & SEO",
-    desc: "Squeezing every millisecond out of your app + technical SEO that ranks.",
+    desc: "Faster load times, smoother interactions, and the technical SEO that helps pages get found.",
     tags: ["Lighthouse"],
   },
   {
-    icon: <FaBolt />,
-    title: "SaaS / E-commerce / POS",
-    desc: "Building SaaS, e-commerce and POS apps with a modern stack and best practices.",
+    title: "SaaS, e-commerce & POS",
+    desc: "Subscription products, online stores and point-of-sale systems, from data model to checkout.",
     tags: ["React", "Node.js"],
   },
 ];
@@ -171,33 +160,6 @@ const EXPERIENCE = [
 ];
 
 /* ============================ hooks ============================ */
-
-function useTyping(words: string[]) {
-  const [i, setI] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const word = words[i];
-    const speed = deleting ? 40 : 80;
-    const t = setTimeout(() => {
-      if (!deleting) {
-        const next = word.slice(0, text.length + 1);
-        setText(next);
-        if (next === word) setTimeout(() => setDeleting(true), 1400);
-      } else {
-        const next = word.slice(0, text.length - 1);
-        setText(next);
-        if (next === "") {
-          setDeleting(false);
-          setI((v) => (v + 1) % words.length);
-        }
-      }
-    }, speed);
-    return () => clearTimeout(t);
-  }, [text, deleting, i, words]);
-  return text;
-}
 
 /* ============================ shell ============================ */
 
@@ -227,7 +189,7 @@ export function MobileView() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-paper text-ink">
       {/* subtle CRT scanline for retro vibe */}
-      <div className="pointer-events-none fixed inset-0 z-[60] opacity-[0.04] [background:repeating-linear-gradient(to_bottom,#000_0px,#000_1px,transparent_1px,transparent_3px)]" />
+      <div className="pointer-events-none fixed inset-0 z-(--z-overlay) opacity-[0.04] [background:repeating-linear-gradient(to_bottom,#000_0px,#000_1px,transparent_1px,transparent_3px)]" />
 
       {/* title bar */}
       <header className="flex shrink-0 items-center gap-2 border-b border-olive-dark/60 bg-olive-dark px-3 py-2 text-paper">
@@ -239,7 +201,7 @@ export function MobileView() {
         <span className="ml-1 font-mono text-xs tracking-tight">
           C:\AzharAli\{tab === "me" ? "Profile" : "Projects"}
         </span>
-        <span className="ml-auto grid h-5 w-5 place-items-center rounded-sm bg-orange text-[11px] font-bold text-white">
+        <span className="ml-auto grid h-5 w-5 place-items-center rounded-sm bg-orange text-[11px] font-bold text-accent-foreground">
           A
         </span>
       </header>
@@ -262,13 +224,13 @@ export function MobileView() {
         <TabButton
           active={tab === "me"}
           onClick={() => setTab("me")}
-          icon={<FaUser />}
+          icon={<PiUser />}
           label="Me"
         />
         <TabButton
           active={tab === "work"}
           onClick={() => setTab("work")}
-          icon={<FaFolderOpen />}
+          icon={<PiFolderOpen />}
           label="Work"
         />
       </nav>
@@ -292,8 +254,8 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`relative flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition ${
-        active ? "text-white" : "text-paper/60"
+      className={`relative flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-xs font-semibold transition active:scale-95 ${
+        active ? "text-paper" : "text-paper/60"
       }`}
     >
       {active && (
@@ -311,150 +273,131 @@ function TabButton({
 /* ============================ Me page ============================ */
 
 function MePage({ onContact, onResume }: { onContact: () => void; onResume: () => void }) {
-  const typed = useTyping(ROLES);
-
   return (
     <div className="pb-10">
       {/* hero */}
-      <section className="relative overflow-hidden border-b border-paper-line bg-card px-5 pb-8 pt-7">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-orange/15 blur-2xl" />
-        <div className="relative flex items-center gap-4">
+      <section className="border-b border-paper-line bg-card px-5 pb-8 pt-7">
+        <div className="flex items-center gap-4">
           <div className="relative shrink-0">
-            <div className="absolute -inset-1 rounded-full bg-orange/30 blur-md" />
             <img
               src={avatar}
-              alt="Azhar Ali"
-              width={88}
-              height={88}
-              className="relative h-22 w-22 rounded-full border-2 border-olive-dark object-cover"
+              alt="Portrait of Azhar Ali"
+              width={80}
+              height={80}
+              className="h-20 w-20 rounded-full border border-paper-line object-cover"
             />
-            <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-paper bg-green-500" />
+            <span
+              aria-hidden
+              className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-card bg-online"
+            />
           </div>
           <div className="min-w-0">
-            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-              &gt; who am i
-            </div>
-            <h1 className="mt-0.5 text-3xl font-bold tracking-tight text-olive-dark">Azhar Ali</h1>
-            <div className="mt-1 h-6 font-mono text-sm text-orange">
-              {typed}
-              <span className="ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 animate-pulse bg-orange" />
-            </div>
+            <h1 className="font-display text-4xl leading-none tracking-tight text-olive-dark">
+              Azhar Ali
+            </h1>
+            <p className="mt-1.5 text-sm text-ink-soft">Full-stack developer</p>
           </div>
         </div>
 
-        <p className="relative mt-5 leading-relaxed text-ink">
-          I create beautiful, functional, and user-centered digital experiences. Over 3 years of
-          building web and mobile products — turning ideas into elegant, scalable applications with
-          modern tech and thoughtful design.
+        <p className="mt-5 leading-relaxed text-ink">
+          I build web and mobile products end to end: React and Next.js on the front, Node.js on
+          the back. For three years I've taken ideas from a rough sketch to a shipped app, with close
+          attention to speed, accessibility and the small interactions people notice.
         </p>
 
-        <div className="relative mt-5 grid grid-cols-2 gap-3 text-sm">
-          <div className="rounded-md border border-paper-line bg-paper p-3">
-            <div className="flex items-center gap-2 text-ink-soft">
-              <FaMapMarkerAlt /> Location
-            </div>
-            <div className="mt-1 font-medium">Bahawalpur, PK</div>
+        <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-paper-line pt-4 text-sm">
+          <div>
+            <dt className="text-ink-soft">Location</dt>
+            <dd className="mt-0.5 font-medium">Bahawalpur, PK</dd>
           </div>
-          <div className="rounded-md border border-paper-line bg-paper p-3">
-            <div className="flex items-center gap-2 text-ink-soft">
-              <span className="h-2 w-2 rounded-full bg-green-500" /> Status
-            </div>
-            <div className="mt-1 font-medium">Open to work</div>
+          <div>
+            <dt className="text-ink-soft">Availability</dt>
+            <dd className="mt-0.5 font-medium">Open to work</dd>
           </div>
-        </div>
+        </dl>
 
-        <div className="relative mt-5 flex gap-3">
-          <button
-            onClick={onContact}
-            className="flex-1 rounded-md bg-orange px-4 py-2.5 text-sm font-semibold text-white shadow-[0_2px_0_#c56e17] transition active:translate-y-0.5"
-          >
-            Hire Me
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <button onClick={onContact} className="btn-primary h-11 px-4 text-sm">
+            Hire me
           </button>
-          <button
-            onClick={onResume}
-            className="flex-1 rounded-md border border-olive-dark bg-paper px-4 py-2.5 text-sm font-semibold text-olive-dark transition active:translate-y-0.5"
-          >
-            View Resume
+          <button onClick={onResume} className="btn-secondary h-11 px-4 text-sm">
+            View resume
           </button>
         </div>
 
-        <div className="relative mt-5 flex items-center gap-5 border-t border-paper-line pt-4 text-xl text-ink-soft">
+        <div className="mt-5 flex items-center gap-1 text-xl text-ink-soft">
           <a
             href="https://github.com/azhar0i0"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"
+            className="grid h-10 w-10 place-items-center rounded-md transition-colors active:bg-secondary"
           >
-            <FaGithub />
+            <PiGithubLogoFill />
           </a>
           <a
             href="https://www.linkedin.com/in/skibidi-azhar"
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
+            className="grid h-10 w-10 place-items-center rounded-md transition-colors active:bg-secondary"
           >
-            <FaLinkedin />
+            <PiLinkedinLogoFill />
           </a>
-          <a href="mailto:azharisworking@gmail.com" aria-label="Email">
-            <FaEnvelope />
+          <a
+            href="mailto:azharisworking@gmail.com"
+            aria-label="Email"
+            className="grid h-10 w-10 place-items-center rounded-md transition-colors active:bg-secondary"
+          >
+            <PiEnvelopeSimple />
           </a>
         </div>
       </section>
 
       {/* about / timeline */}
-      <Section id="about" eyebrow="about" title="The journey">
+      <Section id="about" title="The journey">
         <ol className="relative border-l-2 border-paper-line pl-6">
           {TIMELINE.map((t, i) => (
             <motion.li
               key={t.year}
-              initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="mb-5"
+              {...reveal(i * 0.05)}
+              className="relative mb-5"
             >
-              <span className="absolute -left-[9px] mt-1 h-4 w-4 rounded-full border-2 border-orange bg-paper" />
+              <span className="absolute -left-[30px] top-1.5 h-2.5 w-2.5 rounded-full bg-orange ring-4 ring-paper" />
               <div className="font-mono text-xs text-orange">{t.year}</div>
               <div className="font-semibold text-olive-dark">{t.title}</div>
               <div className="text-sm text-ink-soft">{t.detail}</div>
             </motion.li>
           ))}
         </ol>
-        <div className="mt-2 grid grid-cols-2 gap-3">
+        <dl className="mt-2">
           {VALUES.map((v) => (
-            <div key={v.k} className="rounded-md border border-paper-line bg-card p-3">
-              <div className="font-semibold text-olive-dark">{v.k}</div>
-              <div className="mt-1 text-xs text-ink-soft">{v.v}</div>
+            <div key={v.k} className="border-t border-paper-line py-3">
+              <dt className="font-semibold text-olive-dark">{v.k}</dt>
+              <dd className="mt-0.5 text-sm text-ink-soft">{v.v}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </Section>
 
       {/* skills */}
-      <Section id="skills" eyebrow="toolbox" title="Skills & Tech">
-        <div className="space-y-4">
+      <Section id="skills" title="Skills & tools">
+        <div className="space-y-7">
           {SKILL_GROUPS.map((g) => (
-            <div key={g.title} className="rounded-lg border border-paper-line bg-card p-4">
-              <div className="mb-3 flex items-baseline justify-between">
+            <div key={g.title}>
+              <div className="mb-3 flex items-baseline justify-between border-b border-paper-line pb-2">
                 <h3 className="font-semibold text-olive-dark">{g.title}</h3>
-                <span className="font-mono text-xs text-ink-soft">{g.skills.length} items</span>
               </div>
               <ul className="space-y-2.5">
                 {g.skills.map((s, i) => (
                   <li key={s.name}>
                     <div className="flex items-baseline justify-between text-sm">
                       <span className="font-medium">{s.name}</span>
-                      <span className="font-mono text-xs text-ink-soft">{s.years}y</span>
+                      <span className="tabular font-mono text-xs text-ink-soft">
+                        {s.years} {s.years === 1 ? "yr" : "yrs"}
+                      </span>
                     </div>
-                    <div className="mt-1 h-2 overflow-hidden rounded-full bg-paper">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${s.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.05, duration: 0.7, ease: "easeOut" }}
-                        className="h-full rounded-full bg-gradient-to-r from-orange to-orange-soft"
-                      />
-                    </div>
+                    <SkillMeter level={s.level} delay={i * 0.04} inView />
                   </li>
                 ))}
               </ul>
@@ -464,41 +407,32 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
       </Section>
 
       {/* services */}
-      <Section id="services" eyebrow="menu" title="What I can build">
-        <div className="grid grid-cols-1 gap-3">
+      <Section id="services" title="What I can build">
+        <ol className="border-b border-paper-line">
           {SERVICES.map((s, i) => (
-            <motion.div
+            <motion.li
               key={s.title}
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.04 }}
-              className="rounded-lg border border-paper-line bg-card p-4"
+              {...reveal(i * 0.04)}
+              className="border-t border-paper-line py-4"
             >
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-orange/15 text-orange">
-                  {s.icon}
-                </span>
+              <div>
                 <h3 className="font-semibold text-olive-dark">{s.title}</h3>
+                <p className="mt-1 text-sm text-ink-soft">{s.desc}</p>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {s.tags.map((t) => (
+                    <span key={t} className="tag">
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <p className="mt-2.5 text-sm text-ink-soft">{s.desc}</p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {s.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full bg-secondary px-2 py-0.5 font-mono text-[10px] text-ink-soft"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </Section>
 
       {/* resume */}
-      <Section id="resume" eyebrow="resume" title="Experience">
+      <Section id="resume" title="Experience">
         <div className="rounded-lg border border-paper-line bg-card p-4">
           <p className="text-sm leading-relaxed text-ink-soft">
             Full-stack developer with 3 years of experience building web and mobile interfaces. I
@@ -522,17 +456,17 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
             ))}
           </div>
           <div className="mt-4 border-t border-paper-line pt-3">
-            <div className="font-mono text-xs uppercase tracking-widest text-orange">Education</div>
+            <div className="text-sm font-semibold text-olive-dark">Education</div>
             <div className="mt-1 flex items-baseline justify-between gap-2">
-              <div className="font-semibold text-olive-dark">BS in Computer Science</div>
+              <div className="text-sm text-ink">BS in Computer Science</div>
               <div className="font-mono text-[11px] text-ink-soft">2020 — 2024</div>
             </div>
           </div>
           <button
             onClick={downloadVCard}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-olive-dark px-4 py-2.5 text-sm font-semibold text-paper transition active:translate-y-0.5"
+            className="btn-secondary mt-4 h-11 w-full px-4 text-sm"
           >
-            <FaFileDownload /> Download vCard
+            <PiDownloadSimple /> Download vCard
           </button>
         </div>
       </Section>
@@ -545,23 +479,21 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
 
 function Section({
   id,
-  eyebrow,
   title,
   children,
 }: {
   id: string;
-  eyebrow: string;
   title: string;
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-14 px-5 py-7">
-      <div className="mb-4">
-        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-          &gt; {eyebrow}
-        </div>
-        <h2 className="mt-0.5 text-xl font-bold text-olive-dark">{title}</h2>
-      </div>
+    <section id={id} className="scroll-mt-14 px-5 py-10">
+      <motion.h2
+        {...reveal()}
+        className="mb-5 text-xl font-semibold tracking-tight text-olive-dark"
+      >
+        {title}
+      </motion.h2>
       {children}
     </section>
   );
@@ -604,10 +536,8 @@ function ContactSection() {
   return (
     <section id="contact" className="scroll-mt-14 px-5 py-7">
       <div className="mb-4">
-        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
-          &gt; reach out
-        </div>
-        <h2 className="mt-0.5 text-xl font-bold text-olive-dark">Let's talk</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-olive-dark">Let's talk</h2>
+        <p className="mt-1 text-sm text-ink-soft">I usually reply within a day.</p>
       </div>
 
       <ul className="mb-4 space-y-2 rounded-lg border border-paper-line bg-card p-4 text-sm">
@@ -616,14 +546,14 @@ function ContactSection() {
             href="mailto:azharisworking@gmail.com"
             className="flex items-center gap-2.5 hover:underline"
           >
-            <FaEnvelope className="text-orange" /> azharisworking@gmail.com
+            <PiEnvelopeSimple className="text-orange" /> azharisworking@gmail.com
           </a>
         </li>
         <li className="flex items-center gap-2.5">
-          <FaPhone className="text-orange" /> +92 329 8892016
+          <PiPhone className="text-orange" /> +92 329 8892016
         </li>
         <li className="flex items-center gap-2.5">
-          <FaMapMarkerAlt className="text-orange" /> Bahawalpur, Pakistan
+          <PiMapPin className="text-orange" /> Bahawalpur, Pakistan
         </li>
         <li className="flex gap-4 pt-1 text-lg text-ink-soft">
           <a
@@ -632,7 +562,7 @@ function ContactSection() {
             rel="noreferrer"
             aria-label="GitHub"
           >
-            <FaGithub />
+            <PiGithubLogoFill />
           </a>
           <a
             href="https://www.linkedin.com/in/skibidi-azhar"
@@ -640,7 +570,7 @@ function ContactSection() {
             rel="noreferrer"
             aria-label="LinkedIn"
           >
-            <FaLinkedin />
+            <PiLinkedinLogoFill />
           </a>
         </li>
       </ul>
@@ -678,18 +608,18 @@ function ContactSection() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="w-full rounded-md bg-orange px-4 py-2.5 text-sm font-semibold text-white shadow-[0_2px_0_#c56e17] transition active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-primary h-11 w-full px-4 text-sm"
         >
-          {status === "sending" ? "Sending…" : "Send Message"}
+          {status === "sending" ? "Sending…" : "Send message"}
         </button>
         {status === "success" && (
-          <div className="rounded-md border border-green-500/40 bg-green-500/10 p-2 text-center text-xs text-green-700">
-            Message sent — I'll get back to you soon!
+          <div role="status" className="rounded-md border border-online/40 bg-online/10 p-2 text-center text-xs text-ink">
+            Message sent. I usually reply within a day.
           </div>
         )}
         {status === "error" && (
-          <div className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-center text-xs text-destructive">
-            Something went wrong. Please try again or email me directly.
+          <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-center text-xs text-destructive">
+            The message didn't send. Try again, or email azharisworking@gmail.com directly.
           </div>
         )}
       </form>
@@ -703,7 +633,7 @@ const inputCls =
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-ink-soft">
+      <span className="mb-1.5 block text-sm font-medium text-ink">
         {label}
       </span>
       {children}

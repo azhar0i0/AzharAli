@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaGithub, FaLinkedin } from "react-icons/fa";
+import {
+  PiEnvelopeSimple,
+  PiPhone,
+  PiMapPin,
+  PiGithubLogoFill,
+  PiLinkedinLogoFill,
+} from "react-icons/pi";
 
 export function ContactApp() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -35,32 +40,32 @@ export function ContactApp() {
   };
 
   return (
-    <div className="grid h-full grid-cols-1 md:grid-cols-[230px_1fr]">
+    <div className="grid h-full grid-cols-1 md:grid-cols-[260px_1fr]">
       <aside className="space-y-3 border-b border-paper-line bg-secondary/60 p-5 text-sm md:border-b-0 md:border-r">
-        <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">Reach out</div>
-        <h2 className="text-lg font-bold text-olive-dark">Let's talk</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-olive-dark">Let's talk</h2>
+        <p className="text-ink-soft">Tell me what you're building. I usually reply within a day.</p>
         <ul className="space-y-2 text-ink">
           <li className="flex items-start gap-2">
-            <a href="mailto:azharisworking@gmail.com" className="hover:underline flex items-start gap-2">
-            <FaEnvelope className="mt-1 text-orange" />
+            <a href="mailto:azharisworking@gmail.com" className="flex min-w-0 items-start gap-2 underline-offset-4 [overflow-wrap:anywhere] hover:underline">
+            <PiEnvelopeSimple className="mt-1 text-orange" />
               azharisworking@gmail.com
             </a>
           </li>
           <li className="flex items-start gap-2">
-            <FaPhone className="mt-1 text-orange" />
+            <PiPhone className="mt-1 text-orange" />
             +92 329 8892016
           </li>
           <li className="flex items-start gap-2">
-            <FaMapMarkerAlt className="mt-1 text-orange" />
+            <PiMapPin className="mt-1 text-orange" />
             Bahawalpur, Pakistan
           </li>
         </ul>
         <div className="flex gap-3 pt-2 text-lg text-ink-soft">
-          <a href="https://github.com/azhar0i0" target="_blank" rel="noreferrer" className="hover:text-olive-dark"><FaGithub /></a>
-          <a href="https://www.linkedin.com/in/skibidi-azhar" target="_blank" rel="noreferrer" className="hover:text-blue"><FaLinkedin /></a>
+          <a href="https://github.com/azhar0i0" target="_blank" rel="noreferrer" aria-label="GitHub" className="transition hover:text-olive-dark"><PiGithubLogoFill /></a>
+          <a href="https://www.linkedin.com/in/skibidi-azhar" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition hover:text-olive-dark"><PiLinkedinLogoFill /></a>
         </div>
       </aside>
-      <form onSubmit={submit} className="space-y-3 overflow-y-auto p-5 scrollbar-thin">
+      <form onSubmit={submit} className="w-full max-w-xl space-y-4 overflow-y-auto p-6 scrollbar-thin">
         <Field label="Name">
           <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} placeholder="Your name" />
         </Field>
@@ -70,22 +75,21 @@ export function ContactApp() {
         <Field label="Message">
           <textarea required rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className={`${inputCls} resize-none`} placeholder="Tell me about your project…" />
         </Field>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
+        <button
           type="submit"
           disabled={status === "sending"}
-          className="w-full rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white shadow-[0_2px_0_#c56e17] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-primary h-10 w-full px-5 text-sm"
         >
-          {status === "sending" ? "Sending…" : "Send Message"}
-        </motion.button>
+          {status === "sending" ? "Sending…" : "Send message"}
+        </button>
         {status === "success" && (
-          <div className="rounded-md border border-green-500/40 bg-green-500/10 p-2 text-center text-xs text-green-700">
-            Message sent — I'll get back to you soon!
+          <div role="status" className="rounded-md border border-online/40 bg-online/10 p-2 text-center text-xs text-ink">
+            Message sent. I usually reply within a day.
           </div>
         )}
         {status === "error" && (
-          <div className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-center text-xs text-destructive">
-            Something went wrong. Please try again or email me directly.
+          <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-center text-xs text-destructive">
+            The message didn't send. Try again, or email azharisworking@gmail.com directly.
           </div>
         )}
       </form>
@@ -99,7 +103,7 @@ const inputCls =
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block font-mono text-[10px] uppercase tracking-widest text-ink-soft">{label}</span>
+      <span className="mb-1.5 block text-sm font-medium text-ink">{label}</span>
       {children}
     </label>
   );

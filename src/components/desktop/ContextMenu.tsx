@@ -7,7 +7,7 @@ import {
   useSettingsStore,
   useWindowStore,
 } from "@/lib/desktop/store";
-import { FaChevronRight } from "react-icons/fa";
+import { PiCaretRight } from "react-icons/pi";
 
 const EDGE_PAD = 8;
 
@@ -73,7 +73,7 @@ export function ContextMenu({
     <AnimatePresence>
       <>
         <div
-          className="fixed inset-0 z-[9997]"
+          className="fixed inset-0 z-(--z-menu-backdrop)"
           onClick={onClose}
           onContextMenu={(e) => {
             e.preventDefault();
@@ -88,7 +88,7 @@ export function ContextMenu({
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ duration: 0.12 }}
           style={{ left: pos.x, top: pos.y }}
-          className="fixed z-[9998] w-60 rounded-md border border-olive-dark/60 bg-card py-1 text-sm window-shadow"
+          className="fixed z-(--z-menu) w-60 rounded-md border border-olive-dark/60 bg-card py-1 text-sm window-shadow"
           onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => e.preventDefault()}
         >
@@ -110,7 +110,7 @@ export function ContextMenu({
                     className="flex w-full cursor-pointer items-center justify-between px-3 py-1.5 text-left hover:bg-secondary"
                   >
                     <span>{it.label}</span>
-                    <FaChevronRight className="text-[10px] opacity-60" />
+                    <PiCaretRight className="text-[10px] opacity-60" />
                   </button>
                   {isOpen && (
                     <Submenu>

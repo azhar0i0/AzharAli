@@ -1,18 +1,18 @@
-import { FaEnvelope, FaGithub, FaLinkedin, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
+import { PiEnvelopeSimple, PiGithubLogoFill, PiLinkedinLogoFill, PiMapPin, PiPhone } from "react-icons/pi";
 
 export function ResumeApp() {
   return (
     <div className="h-full overflow-y-auto bg-paper p-8 scrollbar-thin">
       <div className="mx-auto max-w-2xl">
         <header className="border-b-2 border-olive-dark pb-4">
-          <h1 className="text-3xl font-bold text-olive-dark">Azhar Ali</h1>
-          <p className="text-sm text-ink-soft">Full-Stack Developer · React / Next.js</p>
+          <h1 className="font-display text-5xl leading-none tracking-tight text-olive-dark">Azhar Ali</h1>
+          <p className="mt-1 text-sm text-ink-soft">Full-stack developer · React / Next.js</p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
-            <span className="flex items-center gap-1"><FaEnvelope /> azharisworking@gmail.com</span>
-            <span className="flex items-center gap-1"><FaPhone /> +92 329 8892016</span>
-            <span className="flex items-center gap-1"><FaMapMarkerAlt /> Bahawalpur, Pakistan</span>
-            <span className="flex items-center gap-1"><FaGithub /> azhar0i0</span>
-            <span className="flex items-center gap-1"><FaLinkedin /> skibidi-azhar</span>
+            <span className="flex items-center gap-1"><PiEnvelopeSimple /> azharisworking@gmail.com</span>
+            <span className="flex items-center gap-1"><PiPhone /> +92 329 8892016</span>
+            <span className="flex items-center gap-1"><PiMapPin /> Bahawalpur, Pakistan</span>
+            <span className="flex items-center gap-1"><PiGithubLogoFill /> azhar0i0</span>
+            <span className="flex items-center gap-1"><PiLinkedinLogoFill /> skibidi-azhar</span>
           </div>
         </header>
 
@@ -59,7 +59,7 @@ export function ResumeApp() {
         <Section title="Skills">
           <p className="text-sm">
             React, Next.js, TypeScript, JavaScript, Tailwind, Framer Motion, Redux,
-            Node.js, Express, Supabase, Firebase, Django, MongoDB, PostgreSQL, MySQL,
+            Node.js, Express, Supabase, Firebase, Django, WordPress, MongoDB, PostgreSQL, MySQL,
             Git, Figma.
           </p>
         </Section>
@@ -87,7 +87,7 @@ function Entry({ role, org, date, bullets }: { role: string; org: string; date: 
           <div className="font-semibold text-olive-dark">{role}</div>
           <div className="text-xs text-ink-soft">{org}</div>
         </div>
-        {date && <div className="font-mono text-xs text-ink-soft">{date}</div>}
+        {date && <div className="tabular shrink-0 font-mono text-xs text-ink-soft">{date}</div>}
       </div>
       {bullets && (
         <ul className="mt-1 list-disc space-y-0.5 pl-5 text-sm text-ink">

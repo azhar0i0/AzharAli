@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaGithub, FaExternalLinkAlt, FaTimes, FaSearch } from "react-icons/fa";
+import { PiGithubLogoFill, PiArrowUpRight, PiX, PiMagnifyingGlass } from "react-icons/pi";
+import { EASE_SPRING } from "@/lib/motion";
 
 type Repo = {
   name: string;
@@ -13,8 +14,10 @@ type Repo = {
   isDashboard: boolean;
 };
 
-async function fetchRepoImage(username: string, repo: string) {
-  const url = `https://raw.githubusercontent.com/${username}/${repo}/main/preview.png`;
+// Repos without a preview.png log a 404 here; that's expected and harmless,
+// the card just falls back to the initials placeholder.
+async function fetchRepoImage(username: string, repo: string, branch: string) {
+  const url = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/preview.png`;
   try {
     const res = await fetch(url, { method: "HEAD" });
     return res.ok ? url : null;
@@ -44,6 +47,7 @@ export function ProjectsApp() {
         const data: Array<{
           name: string; description: string | null; html_url: string;
           homepage: string | null; topics?: string[]; created_at: string;
+          default_branch: string;
         }> = await res.json();
         const filtered = data.filter(
           (r) => r.topics?.includes("portfolio-project") || r.topics?.includes("dashboard"),
@@ -55,8 +59,9 @@ export function ProjectsApp() {
             desc: r.description,
             url: r.homepage || r.html_url,
             homepage: r.homepage,
-            image: await fetchRepoImage(username, r.name),
-            topics: r.topics ?? [],
+            image: await fetchRepoImage(username, r.name, r.default_branch || "main"),
+            // Hide the selector topics; they're for filtering, not for visitors.
+            topics: (r.topics ?? []).filter((t) => t !== "portfolio-project" && t !== "dashboard"),
             created: r.created_at,
             isDashboard: (r.topics ?? []).includes("dashboard"),
           })),
@@ -85,13 +90,11 @@ export function ProjectsApp() {
     <div className="flex h-full flex-col">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-3 border-b border-paper-line bg-secondary/60 px-4 py-3">
         <div>
-          <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">
-            /repos
-          </div>
-          <div className="font-semibold text-olive-dark">Projects from GitHub</div>
+          <h1 className="font-semibold text-olive-dark">Projects</h1>
+          <p className="text-xs text-ink-soft">Pulled live from GitHub</p>
         </div>
         <div className="relative ml-auto md:w-56 w-full">
-          <FaSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-soft" />
+          <PiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-soft" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -117,9 +120,11 @@ export function ProjectsApp() {
           {filtered.map((r, i) => (
             <motion.article
               key={r.name}
-              initial={{ opacity: 0, y: 14 }}
+              // Animate on load, not on scroll: cards live in the window's own
+              // scroll area, where in-view detection can miss the last row.
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ duration: 0.45, ease: EASE_SPRING, delay: Math.min(i, 8) * 0.05 }}
               whileHover={{ y: -4 }}
               onClick={() => setSelected(r)}
               role="button"
@@ -141,13 +146,13 @@ export function ProjectsApp() {
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange-soft/40 font-mono text-3xl text-olive-dark">
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange/20 font-mono text-3xl text-olive-dark">
                     {r.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 {r.isDashboard && (
-                  <span className="absolute left-2 top-2 rounded-full bg-blue px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                    Dashboard
+                  <span className="absolute left-2 top-2 rounded-[2px] bg-[var(--chrome)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--chrome-fg)]">
+                    dashboard
                   </span>
                 )}
               </div>
@@ -160,15 +165,15 @@ export function ProjectsApp() {
                   {r.topics.slice(0, 4).map((t) => (
                     <span
                       key={t}
-                      className="rounded-full bg-secondary px-2 py-0.5 font-mono text-[10px] text-ink-soft"
+                      className="tag"
                     >
                       #{t}
                     </span>
                   ))}
                 </div>
                 <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 text-xs text-ink-soft">
-                  <span className="inline-flex items-center gap-1.5 font-medium text-orange transition group-hover:gap-2.5">
-                    <FaExternalLinkAlt className="text-[10px]" /> View details
+                  <span className="inline-flex items-center gap-1 font-medium text-orange">
+                    View details <PiArrowUpRight className="text-[11px]" />
                   </span>
                   <span className="ml-auto font-mono text-[10px]">
                     {new Date(r.created).getFullYear()}
@@ -267,7 +272,7 @@ function ProjectDetail({
             onClick={onClose}
             className="ml-2 shrink-0 rounded p-1 text-paper/70 transition hover:bg-paper/10 hover:text-paper"
           >
-            <FaTimes className="text-xs" />
+            <PiX className="text-xs" />
           </button>
         </div>
 
@@ -279,13 +284,13 @@ function ProjectDetail({
               className="absolute inset-0 h-full w-full object-cover object-top"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange-soft/40 font-mono text-4xl text-olive-dark">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange/20 font-mono text-4xl text-olive-dark">
               {repo.name.slice(0, 2).toUpperCase()}
             </div>
           )}
           {repo.isDashboard && (
-            <span className="absolute left-2 top-2 rounded-full bg-blue px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-              Dashboard
+            <span className="absolute left-2 top-2 rounded-[2px] bg-[var(--chrome)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--chrome-fg)]">
+              dashboard
             </span>
           )}
         </div>
@@ -306,7 +311,7 @@ function ProjectDetail({
               {repo.topics.map((t) => (
                 <span
                   key={t}
-                  className="rounded-full bg-secondary px-2 py-0.5 font-mono text-[11px] text-ink-soft"
+                  className="tag"
                 >
                   #{t}
                 </span>
@@ -314,20 +319,20 @@ function ProjectDetail({
             </div>
           )}
 
-          <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 max-w-50">
+          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-paper-line pt-3">
             <a
               href={`https://github.com/${username}/${repo.name}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-olive-dark px-1 py-1.5 text-xs font-semibold text-paper transition hover:brightness-110"
+              className="btn-secondary h-8 px-3 text-xs"
             >
-              <FaGithub /> Code
+              <PiGithubLogoFill /> Code
             </a>
             <button
               onClick={onVisit}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-orange px-3 py-1.5 text-xs font-semibold text-white transition hover:brightness-110"
+              className="btn-primary h-8 px-3 text-xs"
             >
-              <FaExternalLinkAlt className="text-[10px]" /> Visit Site
+              Visit site <PiArrowUpRight />
             </button>
           </div>
         </div>
@@ -356,10 +361,10 @@ function DashboardAlert({ repo, onClose }: { repo: Repo; onClose: () => void }) 
         <div className="flex items-center justify-between border-b border-paper-line bg-olive-dark px-4 py-2 text-paper">
           <div className="flex items-center gap-2 font-mono text-xs">
             <span className="h-2.5 w-2.5 rounded-full bg-orange" />
-            Dashboard Access
+            Dashboard access
           </div>
-          <button onClick={onClose} className="text-paper/80 hover:text-paper">
-            <FaTimes />
+          <button onClick={onClose} aria-label="Close" className="text-paper/80 transition hover:text-paper">
+            <PiX />
           </button>
         </div>
         <div className="space-y-4 p-5">
@@ -382,9 +387,9 @@ function DashboardAlert({ repo, onClose }: { repo: Repo; onClose: () => void }) 
             target="_blank"
             rel="noreferrer"
             onClick={onClose}
-            className="block w-full rounded-md bg-orange px-4 py-2 text-center text-sm font-semibold text-white transition hover:brightness-110"
+            className="btn-primary h-10 w-full px-5 text-sm"
           >
-            Visit Site →
+            Visit site <PiArrowUpRight />
           </a>
         </div>
       </motion.div>
