@@ -132,6 +132,7 @@ export function Desktop() {
       />
       {/* Pixel graph-paper grid */}
       <div className="pixel-grid pointer-events-none absolute inset-0" />
+      <div aria-hidden className="grain pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.18))]" />
 
       {/* Icons layer */}
@@ -174,7 +175,7 @@ export function Desktop() {
         <div
           ref={cursorRef}
           aria-hidden
-          className={`pointer-events-none fixed left-0 top-0 z-[10000] -translate-x-1/2 -translate-y-1/2 ${
+          className={`pointer-events-none fixed left-0 top-0 z-(--z-cursor) -translate-x-1/2 -translate-y-1/2 ${
             cursorStyle === "retro" ? "cursor-glyph-retro" : "cursor-glyph-dot"
           } ${hoverTarget === "interactive" ? "is-hover" : ""}`}
         />

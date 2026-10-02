@@ -1,83 +1,74 @@
 import { motion } from "framer-motion";
-import { FaCode, FaMobile, FaServer, FaPalette, FaBolt } from "react-icons/fa";
-import type { ReactNode } from "react";
+import { reveal } from "@/lib/motion";
 
-const SERVICES: { icon: ReactNode; title: string; desc: string; tags: string[] }[] = [
+const SERVICES: { title: string; desc: string; tags: string[] }[] = [
   {
-    icon: <FaCode />,
-    title: "Web Development",
+    title: "Web development",
     desc: "Modern, fast, accessible websites and web apps built with the React ecosystem.",
     tags: ["React", "Next.js", "Tailwind"],
   },
   {
-    icon: <FaMobile />,
-    title: "App Development",
+    title: "App development",
     desc: "Cross-platform mobile experiences that feel native on iOS and Android.",
     tags: ["React Native"],
   },
   {
-    icon: <FaServer />,
-    title: "Backend Development",
+    title: "Backend development",
     desc: "APIs, authentication, databases, real-time — all the plumbing that keeps apps alive.",
     tags: ["Node.js", "Django", "Firebase"],
   },
   {
-    icon: <FaPalette />,
-    title: "UI Design",
+    title: "WordPress sites",
+    desc: "Business sites and blogs on WordPress, set up so you can update pages and posts yourself.",
+    tags: ["WordPress"],
+  },
+  {
+    title: "UI design",
     desc: "Design systems and interfaces that look great and stay consistent as you scale.",
     tags: ["Figma"],
   },
   {
-    icon: <FaBolt />,
     title: "Performance & SEO",
-    desc: "Squeezing every millisecond out of your app + technical SEO that ranks.",
+    desc: "Faster load times, smoother interactions, and the technical SEO that helps pages get found.",
     tags: ["Lighthouse", "Animations"],
   },
   {
-    icon: <FaBolt />,
-    title: "Saas & E-commerce or POS",
-    desc: "Building Saas, E-commerce or POS apps with modern tech stack and best practices.",
+    title: "SaaS, e-commerce & POS",
+    desc: "Subscription products, online stores and point-of-sale systems, from data model to checkout.",
     tags: ["React", "Next.js", "Node.js", "Express"],
   },
 ];
 
 export function ServicesApp() {
   return (
-    <div className="h-full overflow-y-auto p-6 scrollbar-thin">
-      <div className="mb-5">
-        <div className="text-xs uppercase tracking-[0.2em] text-ink-soft">Menu</div>
-        <h1 className="text-2xl font-bold text-olive-dark">Services</h1>
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="@container h-full overflow-y-auto px-8 pb-10 pt-8 scrollbar-thin">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-olive-dark">Services</h1>
+        <p className="mt-1 text-sm text-ink-soft">What I can build for you, from first sketch to production.</p>
+      </header>
+      <ul className="max-w-5xl border-b border-paper-line">
         {SERVICES.map((s, i) => (
-          <motion.div
+          <motion.li
             key={s.title}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06 }}
-            whileHover={{ y: -3 }}
-            className="rounded-lg border border-paper-line bg-card p-4 window-shadow"
+            {...reveal(i * 0.04)}
+            className="grid grid-cols-1 gap-x-8 gap-y-2 border-t border-paper-line py-5 @2xl:grid-cols-[14rem_1fr]"
           >
-            <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-md bg-orange/15 text-orange">
-                {s.icon}
-              </span>
-              <h2 className="font-semibold text-olive-dark">{s.title}</h2>
+            <h2 className="font-semibold leading-snug text-olive-dark">
+              {s.title}
+            </h2>
+            <div>
+              <p className="max-w-[55ch] text-sm leading-relaxed text-ink-soft">{s.desc}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {s.tags.map((t) => (
+                  <span key={t} className="tag">
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
-            <p className="mt-3 text-sm text-ink-soft">{s.desc}</p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {s.tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full bg-secondary px-2 py-0.5 font-mono text-[10px] text-ink-soft"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </motion.div>
+          </motion.li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

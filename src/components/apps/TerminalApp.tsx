@@ -10,7 +10,7 @@ const BANNER = [
 
 const SKILLS = {
   frontend: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Redux"],
-  backend: ["Node.js", "Express", "Supabase", "Firebase", "Django"],
+  backend: ["Node.js", "Express", "Supabase", "Firebase", "Django", "WordPress"],
   db: ["PostgreSQL", "MongoDB", "MySQL"],
   tools: ["Git", "Figma", "Vite", "Vercel"],
 };

@@ -1,26 +1,26 @@
 import type { AppId } from "@/lib/desktop/store";
 import {
-  FaFolder,
-  FaUser,
-  FaCode,
-  FaBriefcase,
-  FaEnvelope,
-  FaFileAlt,
-  FaTerminal,
-  FaCog,
-  FaHome,
-} from "react-icons/fa";
+  PiFolderSimpleFill,
+  PiUserFill,
+  PiCodeFill,
+  PiBriefcaseFill,
+  PiEnvelopeSimpleFill,
+  PiFileTextFill,
+  PiTerminalWindowFill,
+  PiGearSixFill,
+  PiHouseFill,
+} from "react-icons/pi";
 
 const ICONS: Record<AppId, { icon: React.ReactNode; color: string }> = {
-  home: { icon: <FaHome />, color: "#f08a24" },
-  about: { icon: <FaUser />, color: "#4a6d8c" },
-  projects: { icon: <FaFolder />, color: "#f2c94c" },
-  skills: { icon: <FaCode />, color: "#6b7a3f" },
-  services: { icon: <FaBriefcase />, color: "#b2542a" },
-  contact: { icon: <FaEnvelope />, color: "#c94c4c" },
-  resume: { icon: <FaFileAlt />, color: "#3d4a2a" },
-  terminal: { icon: <FaTerminal />, color: "#1a1c17" },
-  settings: { icon: <FaCog />, color: "#6b6852" },
+  home: { icon: <PiHouseFill />, color: "#f08a24" },
+  about: { icon: <PiUserFill />, color: "#4a6d8c" },
+  projects: { icon: <PiFolderSimpleFill />, color: "#f2c94c" },
+  skills: { icon: <PiCodeFill />, color: "#6b7a3f" },
+  services: { icon: <PiBriefcaseFill />, color: "#b2542a" },
+  contact: { icon: <PiEnvelopeSimpleFill />, color: "#c94c4c" },
+  resume: { icon: <PiFileTextFill />, color: "#3d4a2a" },
+  terminal: { icon: <PiTerminalWindowFill />, color: "#1a1c17" },
+  settings: { icon: <PiGearSixFill />, color: "#6b6852" },
 };
 
 export function AppIcon({ appId, size = 32 }: { appId: AppId; size?: number }) {
@@ -50,6 +50,15 @@ export function AppIcon({ appId, size = 32 }: { appId: AppId; size?: number }) {
       className="folder-shadow grid place-items-center rounded-lg border border-black/10 text-[60%]"
     >
       <span style={{ fontSize: size * 0.5 }}>{icon}</span>
+    </span>
+  );
+}
+
+/** Bare glyph for dark chrome (taskbar, title bars) — inherits text color. */
+export function AppGlyph({ appId, size = 16, className = "" }: { appId: AppId; size?: number; className?: string }) {
+  return (
+    <span aria-hidden className={`grid shrink-0 place-items-center ${className}`} style={{ fontSize: size }}>
+      {ICONS[appId].icon}
     </span>
   );
 }

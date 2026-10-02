@@ -7,10 +7,10 @@ import {
   type IconSize,
 } from "@/lib/desktop/store";
 import {
-  FaVolumeMute,
-  FaVolumeUp,
-  FaCheck,
-} from "react-icons/fa";
+  PiSpeakerSlash,
+  PiSpeakerHigh,
+  PiCheck,
+} from "react-icons/pi";
 
 export function SettingsApp() {
   const {
@@ -51,12 +51,12 @@ export function SettingsApp() {
                   style={{ background: t.accent }}
                 />
                 {theme === t.id && (
-                  <FaCheck className="absolute left-1 top-1 text-white drop-shadow" />
+                  <PiCheck className="absolute left-1 top-1 text-white drop-shadow" />
                 )}
               </div>
               <div className="flex items-center justify-between bg-card px-2 py-1.5">
                 <span className="font-pixel text-sm tracking-wide">{t.label}</span>
-                <span className="text-[10px] uppercase tracking-wider text-ink-soft">{t.mode}</span>
+                <span className="font-mono text-[10px] text-ink-soft">{t.mode}</span>
               </div>
             </button>
           ))}
@@ -107,7 +107,7 @@ export function SettingsApp() {
           onClick={toggleSounds}
           className="flex cursor-pointer items-center gap-2 rounded-md border border-paper-line bg-card px-3 py-1.5 text-sm"
         >
-          {soundsMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+          {soundsMuted ? <PiSpeakerSlash /> : <PiSpeakerHigh />}
           {soundsMuted ? "Muted" : "On"}
         </button>
       </Group>
@@ -128,7 +128,7 @@ export function SettingsApp() {
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">{title}</h2>
+      <h2 className="mb-2 text-sm font-semibold text-olive-dark">{title}</h2>
       {children}
     </section>
   );
@@ -139,8 +139,8 @@ function Chip({ active, onClick, label }: { active: boolean; onClick: () => void
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-md border px-3 py-1.5 text-sm capitalize transition ${
-        active ? "border-orange bg-orange text-white" : "border-paper-line bg-card hover:border-olive-dark/60"
+      className={`cursor-pointer rounded-md border px-3 py-1.5 text-sm capitalize transition active:translate-y-px ${
+        active ? "border-orange bg-orange text-accent-foreground" : "border-paper-line bg-card hover:border-olive-dark/60"
       }`}
     >
       {label}
