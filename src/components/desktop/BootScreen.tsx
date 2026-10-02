@@ -4,7 +4,7 @@ import { useSettingsStore } from "@/lib/desktop/store";
 import { EASE_SPRING } from "@/lib/motion";
 
 // What actually happens while the desktop gets ready, in plain words.
-const STEPS = ["Loading workspace", "Fetching projects from GitHub", "Opening desktop"];
+const STEPS = ["Loading workspace", "Fetching projects", "Opening desktop"];
 const STEP_MS = 520;
 
 /**

@@ -1,33 +1,71 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { PiGithubLogoFill, PiArrowUpRight, PiX, PiMagnifyingGlass } from "react-icons/pi";
+import { PiArrowUpRight, PiX, PiMagnifyingGlass } from "react-icons/pi";
 import { EASE_SPRING } from "@/lib/motion";
 
 type Repo = {
   name: string;
   desc: string | null;
   url: string;
-  homepage: string | null;
   image: string | null;
   topics: string[];
   created: string;
   isDashboard: boolean;
+  featured: boolean;
+  dashEmail: string;
+  dashPassword: string;
 };
 
-// Repos without a preview.png log a 404 here; that's expected and harmless,
-// the card just falls back to the initials placeholder.
-async function fetchRepoImage(username: string, repo: string, branch: string) {
-  const url = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/preview.png`;
-  try {
-    const res = await fetch(url, { method: "HEAD" });
-    return res.ok ? url : null;
-  } catch {
-    return null;
+// Projects live in a public Google Sheet ("Projects" tab); row 1 holds the column keys.
+const SHEET_ID = "1RmhdC9BRh3ueJExyrD2ZCg8WAkodpmFQHvx8bj24D8E";
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Projects`;
+
+function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else field += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ",") { row.push(field); field = ""; }
+    else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += ch;
   }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+async function fetchProjects(): Promise<Repo[]> {
+  const res = await fetch(SHEET_CSV);
+  if (!res.ok) throw new Error(`Sheet ${res.status}`);
+  const [head = [], ...body] = parseCsv(await res.text());
+  const keys = head.map((h) => h.trim().toLowerCase());
+  return body
+    .map((cells) => Object.fromEntries(keys.map((k, i) => [k, (cells[i] ?? "").trim()])))
+    .filter((r) => r.name && r.visible?.toUpperCase() !== "FALSE")
+    .map((r) => ({
+      name: r.name,
+      desc: r.description || null,
+      url: r.live_url,
+      image: r.image_url || null,
+      topics: (r.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean),
+      created: r.created,
+      isDashboard: r.type?.toLowerCase() === "dashboard",
+      featured: r.featured?.toUpperCase() === "TRUE",
+      dashEmail: r.dashboard_email || "admin@company.com",
+      dashPassword: r.dashboard_password || "admin.me",
+    }))
+    .sort((a, b) => +b.featured - +a.featured || +new Date(b.created) - +new Date(a.created));
 }
 
 export function ProjectsApp() {
-  const username = "azhar0i0";
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,34 +77,8 @@ export function ProjectsApp() {
     let alive = true;
     (async () => {
       try {
-        const res = await fetch(
-          `https://api.github.com/users/${username}/repos?per_page=100&sort=created&direction=desc`,
-          { headers: { Accept: "application/vnd.github.mercy-preview+json" } },
-        );
-        if (!res.ok) throw new Error(`GitHub ${res.status}`);
-        const data: Array<{
-          name: string; description: string | null; html_url: string;
-          homepage: string | null; topics?: string[]; created_at: string;
-          default_branch: string;
-        }> = await res.json();
-        const filtered = data.filter(
-          (r) => r.topics?.includes("portfolio-project") || r.topics?.includes("dashboard"),
-        );
-        filtered.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-        const withImages = await Promise.all(
-          filtered.map(async (r) => ({
-            name: r.name,
-            desc: r.description,
-            url: r.homepage || r.html_url,
-            homepage: r.homepage,
-            image: await fetchRepoImage(username, r.name, r.default_branch || "main"),
-            // Hide the selector topics; they're for filtering, not for visitors.
-            topics: (r.topics ?? []).filter((t) => t !== "portfolio-project" && t !== "dashboard"),
-            created: r.created_at,
-            isDashboard: (r.topics ?? []).includes("dashboard"),
-          })),
-        );
-        if (alive) setRepos(withImages);
+        const projects = await fetchProjects();
+        if (alive) setRepos(projects);
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Failed to load");
       } finally {
@@ -91,7 +103,7 @@ export function ProjectsApp() {
       <div className="flex flex-col md:flex-row items-start md:items-center gap-3 border-b border-paper-line bg-secondary/60 px-4 py-3">
         <div>
           <h1 className="font-semibold text-olive-dark">Projects</h1>
-          <p className="text-xs text-ink-soft">Pulled live from GitHub</p>
+          <p className="text-xs text-ink-soft">Selected work, newest first</p>
         </div>
         <div className="relative ml-auto md:w-56 w-full">
           <PiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-soft" />
@@ -113,7 +125,7 @@ export function ProjectsApp() {
         )}
         {!loading && !error && filtered.length === 0 && (
           <div className="py-16 text-center text-ink-soft">
-            No projects found. Add the <code className="rounded bg-secondary px-1">portfolio-project</code> or <code className="rounded bg-secondary px-1">dashboard</code> topic to your repos.
+            No projects found.
           </div>
         )}
         <div className="mx-auto grid max-w-6xl grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
@@ -150,11 +162,7 @@ export function ProjectsApp() {
                     {r.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
-                {r.isDashboard && (
-                  <span className="absolute left-2 top-2 rounded-[2px] bg-[var(--chrome)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--chrome-fg)]">
-                    dashboard
-                  </span>
-                )}
+                <Badges repo={r} />
               </div>
               <div className="flex flex-1 flex-col p-4">
                 <h3 className="font-semibold text-olive-dark">{r.name}</h3>
@@ -189,7 +197,6 @@ export function ProjectsApp() {
         {selected && (
           <ProjectDetail
             repo={selected}
-            username={username}
             onClose={() => setSelected(null)}
             onVisit={() => {
               if (selected.isDashboard) setDashRepo(selected);
@@ -231,14 +238,28 @@ function GridSkeleton() {
   );
 }
 
+function Badges({ repo }: { repo: Repo }) {
+  if (!repo.featured && !repo.isDashboard) return null;
+  return (
+    <div className="absolute left-2 top-2 flex gap-1">
+      {repo.featured && (
+        <span className="rounded-[2px] bg-orange px-1.5 py-0.5 font-mono text-[10px] text-paper">featured</span>
+      )}
+      {repo.isDashboard && (
+        <span className="rounded-[2px] bg-[var(--chrome)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--chrome-fg)]">
+          dashboard
+        </span>
+      )}
+    </div>
+  );
+}
+
 function ProjectDetail({
   repo,
-  username,
   onClose,
   onVisit,
 }: {
   repo: Repo;
-  username: string;
   onClose: () => void;
   onVisit: () => void;
 }) {
@@ -288,11 +309,7 @@ function ProjectDetail({
               {repo.name.slice(0, 2).toUpperCase()}
             </div>
           )}
-          {repo.isDashboard && (
-            <span className="absolute left-2 top-2 rounded-[2px] bg-[var(--chrome)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--chrome-fg)]">
-              dashboard
-            </span>
-          )}
+          <Badges repo={repo} />
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
@@ -319,18 +336,10 @@ function ProjectDetail({
             </div>
           )}
 
-          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-paper-line pt-3">
-            <a
-              href={`https://github.com/${username}/${repo.name}`}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-secondary h-8 px-3 text-xs"
-            >
-              <PiGithubLogoFill /> Code
-            </a>
+          <div className="mt-4 border-t border-paper-line pt-3">
             <button
               onClick={onVisit}
-              className="btn-primary h-8 px-3 text-xs"
+              className="btn-primary h-8 w-full px-3 text-xs"
             >
               Visit site <PiArrowUpRight />
             </button>
@@ -375,11 +384,11 @@ function DashboardAlert({ repo, onClose }: { repo: Repo; onClose: () => void }) 
           <dl className="space-y-2 rounded-lg border border-paper-line bg-paper p-3 font-mono text-sm">
             <div className="flex justify-between gap-3">
               <dt className="text-ink-soft">email</dt>
-              <dd className="font-medium">admin@company.com</dd>
+              <dd className="font-medium">{repo.dashEmail}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-ink-soft">password</dt>
-              <dd className="font-medium">admin.me</dd>
+              <dd className="font-medium">{repo.dashPassword}</dd>
             </div>
           </dl>
           <a

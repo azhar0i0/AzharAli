@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Explore Azhar Ali's portfolio as an interactive desktop OS: projects from GitHub, skills, resume, terminal, and more.",
+          "Explore Azhar Ali's portfolio as an interactive desktop OS: projects, skills, resume, terminal, and more.",
       },
       { property: "og:title", content: "Azhar Ali — AzharOS Portfolio" },
       {
