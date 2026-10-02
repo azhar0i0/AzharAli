@@ -1,86 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { PiArrowUpRight, PiX, PiMagnifyingGlass } from "react-icons/pi";
+import { PiArrowUpRight, PiX, PiMagnifyingGlass, PiImageSquare } from "react-icons/pi";
 import { EASE_SPRING } from "@/lib/motion";
-
-type Repo = {
-  name: string;
-  desc: string | null;
-  url: string;
-  image: string | null;
-  topics: string[];
-  created: string;
-  isDashboard: boolean;
-  featured: boolean;
-  dashEmail: string;
-  dashPassword: string;
-};
-
-// Projects live in a public Google Sheet ("Projects" tab); row 1 holds the column keys.
-const SHEET_ID = "1RmhdC9BRh3ueJExyrD2ZCg8WAkodpmFQHvx8bj24D8E";
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Projects`;
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (quoted) {
-      if (ch === '"' && text[i + 1] === '"') { field += '"'; i++; }
-      else if (ch === '"') quoted = false;
-      else field += ch;
-    } else if (ch === '"') quoted = true;
-    else if (ch === ",") { row.push(field); field = ""; }
-    else if (ch === "\n" || ch === "\r") {
-      if (ch === "\r" && text[i + 1] === "\n") i++;
-      row.push(field); rows.push(row); row = []; field = "";
-    } else field += ch;
-  }
-  if (field || row.length) { row.push(field); rows.push(row); }
-  return rows;
-}
-
-async function fetchProjects(): Promise<Repo[]> {
-  const res = await fetch(SHEET_CSV);
-  if (!res.ok) throw new Error(`Sheet ${res.status}`);
-  const [head = [], ...body] = parseCsv(await res.text());
-  const keys = head.map((h) => h.trim().toLowerCase());
-  return body
-    .map((cells) => Object.fromEntries(keys.map((k, i) => [k, (cells[i] ?? "").trim()])))
-    .filter((r) => r.name && r.visible?.toUpperCase() !== "FALSE")
-    .map((r) => ({
-      name: r.name,
-      desc: r.description || null,
-      url: r.live_url,
-      image: r.image_url || null,
-      topics: (r.tags ?? "").split(",").map((t) => t.trim()).filter(Boolean),
-      created: r.created,
-      isDashboard: r.type?.toLowerCase() === "dashboard",
-      featured: r.featured?.toUpperCase() === "TRUE",
-      dashEmail: r.dashboard_email || "admin@company.com",
-      dashPassword: r.dashboard_password || "admin.me",
-    }))
-    .sort((a, b) => +b.featured - +a.featured || +new Date(b.created) - +new Date(a.created));
-}
+import { loadProjects, readCachedProjects, type Project } from "@/lib/projects";
 
 export function ProjectsApp() {
-  const [repos, setRepos] = useState<Repo[]>([]);
+  const [repos, setRepos] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<Repo | null>(null);
-  const [dashRepo, setDashRepo] = useState<Repo | null>(null);
+  const [selected, setSelected] = useState<Project | null>(null);
+  const [dashRepo, setDashRepo] = useState<Project | null>(null);
 
   useEffect(() => {
     let alive = true;
     (async () => {
+      // Show what this browser saved last time right away, then refresh.
+      const cached = readCachedProjects();
+      if (cached) {
+        setRepos(cached);
+        setLoading(false);
+      }
       try {
-        const projects = await fetchProjects();
+        const projects = await loadProjects();
         if (alive) setRepos(projects);
       } catch (e) {
-        if (alive) setError(e instanceof Error ? e.message : "Failed to load");
+        if (alive && !cached) setError(e instanceof Error ? e.message : "Failed to load");
       } finally {
         if (alive) setLoading(false);
       }
@@ -150,18 +95,11 @@ export function ProjectsApp() {
               className="group flex cursor-pointer flex-col overflow-hidden rounded-lg border border-paper-line bg-card shadow-md outline-none hover:shadow-2xl focus-visible:ring-2 focus-visible:ring-orange"
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
-                {r.image ? (
-                  <img
-                    src={r.image}
-                    alt={r.name}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange/20 font-mono text-3xl text-olive-dark">
-                    {r.name.slice(0, 2).toUpperCase()}
-                  </div>
-                )}
+                <Thumb
+                  project={r}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  fallbackClassName="h-full w-full"
+                />
                 <Badges repo={r} />
               </div>
               <div className="flex flex-1 flex-col p-4">
@@ -238,7 +176,50 @@ function GridSkeleton() {
   );
 }
 
-function Badges({ repo }: { repo: Repo }) {
+// Shows a "no preview" panel when the sheet has no image link or the link
+// doesn't load.
+function Thumb({
+  project,
+  className,
+  fallbackClassName,
+  large = false,
+}: {
+  project: Project;
+  className: string;
+  fallbackClassName: string;
+  large?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (!project.image || failed) {
+    return (
+      <div
+        role="img"
+        aria-label={`No preview available for ${project.name}`}
+        className={`${fallbackClassName} flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-olive-light/25 via-secondary to-orange/10`}
+      >
+        <span
+          className={`grid place-items-center rounded-lg border border-dashed border-olive-dark/30 bg-paper/70 text-olive-dark/70 ${large ? "h-14 w-14 text-3xl" : "h-11 w-11 text-2xl"}`}
+        >
+          <PiImageSquare />
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
+          No preview available
+        </span>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={project.image}
+      alt={project.name}
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className={className}
+    />
+  );
+}
+
+function Badges({ repo }: { repo: Project }) {
   if (!repo.featured && !repo.isDashboard) return null;
   return (
     <div className="absolute left-2 top-2 flex gap-1">
@@ -259,7 +240,7 @@ function ProjectDetail({
   onClose,
   onVisit,
 }: {
-  repo: Repo;
+  repo: Project;
   onClose: () => void;
   onVisit: () => void;
 }) {
@@ -298,17 +279,12 @@ function ProjectDetail({
         </div>
 
         <div className="relative aspect-[2/1] shrink-0 overflow-hidden border-b border-paper-line bg-secondary">
-          {repo.image ? (
-            <img
-              src={repo.image}
-              alt={repo.name}
-              className="absolute inset-0 h-full w-full object-cover object-top"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-olive-light/40 to-orange/20 font-mono text-4xl text-olive-dark">
-              {repo.name.slice(0, 2).toUpperCase()}
-            </div>
-          )}
+          <Thumb
+            project={repo}
+            className="absolute inset-0 h-full w-full object-cover object-top"
+            fallbackClassName="absolute inset-0"
+            large
+          />
           <Badges repo={repo} />
         </div>
 
@@ -350,7 +326,7 @@ function ProjectDetail({
   );
 }
 
-function DashboardAlert({ repo, onClose }: { repo: Repo; onClose: () => void }) {
+function DashboardAlert({ repo, onClose }: { repo: Project; onClose: () => void }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
