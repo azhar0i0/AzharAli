@@ -14,8 +14,10 @@ export type Project = {
 };
 
 // Projects live in a public Google Sheet ("Projects" tab); row 1 holds the column keys.
+// The tab is picked by gid so renaming it doesn't break the fetch.
 const SHEET_ID = "1RmhdC9BRh3ueJExyrD2ZCg8WAkodpmFQHvx8bj24D8E";
-const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Projects`;
+const SHEET_GID = "817751572";
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
 // v2: lists saved before image links were resolved held unusable ImgBB page URLs.
 const CACHE_KEY = "azhar.projects.v2";
 
