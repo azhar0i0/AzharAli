@@ -12,7 +12,7 @@ import {
   PiDownloadSimple,
 } from "react-icons/pi";
 import type { ReactNode } from "react";
-import avatar from "@/assets/avatar.jpg";
+import { PopAvatar } from "@/components/PopAvatar";
 import { getTheme, THEMES, useSettingsStore } from "@/lib/desktop/store";
 
 const THEME_CLASSES = THEMES.map((t) => `theme-${t.id}`);
@@ -278,19 +278,7 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
       {/* hero */}
       <section className="border-b border-paper-line bg-card px-5 pb-8 pt-7">
         <div className="flex items-center gap-4">
-          <div className="relative shrink-0">
-            <img
-              src={avatar}
-              alt="Portrait of Azhar Ali"
-              width={80}
-              height={80}
-              className="h-20 w-20 rounded-full border border-paper-line object-cover"
-            />
-            <span
-              aria-hidden
-              className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-card bg-online"
-            />
-          </div>
+          <PopAvatar size={80} alt="Portrait of Azhar Ali" online />
           <div className="min-w-0">
             <h1 className="font-display text-4xl leading-none tracking-tight text-olive-dark">
               Azhar Ali

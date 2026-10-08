@@ -1,5 +1,5 @@
 import { PiGithubLogoFill, PiLinkedinLogoFill, PiEnvelopeSimple } from "react-icons/pi";
-import avatar from "@/assets/avatar.jpg";
+import { PopAvatar } from "@/components/PopAvatar";
 import { useWindowStore } from "@/lib/desktop/store";
 
 const LINKS = [
@@ -13,19 +13,7 @@ export function HomeApp() {
   return (
     <div className="flex h-full flex-col overflow-y-auto px-8 py-8 scrollbar-thin">
       <div className="flex items-center gap-6">
-        <div className="relative shrink-0">
-          <img
-            src={avatar}
-            alt="Portrait of Azhar Ali"
-            width={104}
-            height={104}
-            className="h-26 w-26 rounded-full border border-paper-line object-cover"
-          />
-          <span
-            aria-hidden
-            className="absolute bottom-1.5 right-1.5 h-3.5 w-3.5 rounded-full border-2 border-card bg-online"
-          />
-        </div>
+        <PopAvatar size={104} alt="Portrait of Azhar Ali" online />
         <div className="min-w-0">
           <h1 className="font-display text-5xl leading-none tracking-tight text-olive-dark">
             Azhar Ali

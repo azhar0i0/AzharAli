@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import avatar from "@/assets/avatar.jpg";
+import { PopAvatar } from "@/components/PopAvatar";
 import { reveal } from "@/lib/motion";
 
 const TIMELINE = [
@@ -21,13 +21,7 @@ export function AboutApp() {
   return (
     <div className="h-full overflow-y-auto px-8 pb-10 pt-8 scrollbar-thin">
       <div className="flex flex-col items-center gap-5 text-center md:flex-row md:items-start md:text-left">
-        <img
-          src={avatar}
-          alt=""
-          width={96}
-          height={96}
-          className="h-20 w-20 rounded-full border border-paper-line object-cover"
-        />
+        <PopAvatar size={80} />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-olive-dark">
             Hi, I'm Azhar
