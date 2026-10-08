@@ -25,7 +25,7 @@ export const APP_COMPONENTS: Record<AppId, ComponentType> = {
 export const APP_META: Record<AppId, { label: string; hint: string }> = {
   home: { label: "Home", hint: "About Azhar at a glance" },
   about: { label: "About", hint: "Story, values, timeline" },
-  projects: { label: "Projects", hint: "Live GitHub portfolio" },
+  projects: { label: "Projects", hint: "Selected work" },
   skills: { label: "Skills", hint: "Frontend, backend, tools" },
   services: { label: "Services", hint: "What I can build for you" },
   contact: { label: "Contact", hint: "Send a message" },

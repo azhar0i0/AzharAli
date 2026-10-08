@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSettingsStore } from "@/lib/desktop/store";
 import { EASE_SPRING } from "@/lib/motion";
+import { loadProjects } from "@/lib/projects";
 
 // What actually happens while the desktop gets ready, in plain words.
-const STEPS = ["Loading workspace", "Fetching projects from GitHub", "Opening desktop"];
+const STEPS = ["Loading workspace", "Fetching projects", "Opening desktop"];
 const STEP_MS = 520;
 
 /**
@@ -16,6 +17,12 @@ export function BootScreen() {
   const booted = useSettingsStore((s) => s.booted);
   const [visible, setVisible] = useState(!booted);
   const [step, setStep] = useState(0);
+
+  // Runs on every visit (even when the boot screen is skipped) so the
+  // Projects window opens with fresh data from localStorage.
+  useEffect(() => {
+    loadProjects().catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!visible) return;

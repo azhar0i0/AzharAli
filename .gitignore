@@ -30,3 +30,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# local Google Sheet export (CSV + project screenshots)
+sheet-export/

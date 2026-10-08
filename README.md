@@ -16,7 +16,7 @@ browser tab like it was a whole computer.
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev)
 [![Cloudflare](https://img.shields.io/badge/Deploy-Cloudflare-F38020?logo=cloudflare&logoColor=white)](https://developers.cloudflare.com/workers/)
 
-![AzharOS preview](./preview.png)
+![AzharOS preview](./showcase.png)
 
 </div>
 
