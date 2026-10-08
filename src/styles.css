@@ -530,19 +530,36 @@
   justify-content: center;
   gap: 0.5rem;
   white-space: nowrap;
-  border: 1px solid transparent;
+  /* Raised key: top highlight, darker ledge underneath, soft drop shadow. */
+  --btn-ledge: color-mix(in oklab, var(--accent) 80%, black);
+  border: 1px solid color-mix(in oklab, var(--accent) 90%, black);
   border-radius: var(--radius-md);
-  background: var(--accent);
+  background-color: var(--accent);
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 55%);
   color: var(--accent-foreground);
   font-weight: 500;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 3px 0 var(--btn-ledge),
+    0 6px 12px -6px rgb(0 0 0 / 0.2);
   transition:
     background-color 200ms var(--ease-spring),
+    box-shadow 120ms var(--ease-spring),
     transform 120ms var(--ease-spring);
   &:hover:not(:disabled) {
-    background: color-mix(in oklab, var(--accent) 88%, black);
+    background-color: color-mix(in oklab, var(--accent) 92%, black);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 4px 0 var(--btn-ledge),
+      0 8px 14px -6px rgb(0 0 0 / 0.22);
   }
   &:active:not(:disabled) {
-    transform: translateY(1px);
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 1px 2px rgb(0 0 0 / 0.15),
+      0 1px 0 var(--btn-ledge),
+      0 2px 4px -2px rgb(0 0 0 / 0.25);
   }
   &:disabled {
     cursor: not-allowed;
@@ -556,21 +573,38 @@
   justify-content: center;
   gap: 0.5rem;
   white-space: nowrap;
-  border: 1px solid color-mix(in oklab, var(--olive-dark) 35%, transparent);
+  /* Same raised key as btn-primary, on a paper face with an olive ledge. */
+  --btn-ledge: color-mix(in oklab, var(--olive-dark) 20%, transparent);
+  border: 1px solid color-mix(in oklab, var(--olive-dark) 18%, transparent);
   border-radius: var(--radius-md);
-  background: transparent;
+  background-color: var(--card);
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0.15), rgb(255 255 255 / 0) 60%);
   color: var(--olive-dark);
   font-weight: 500;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 3px 0 var(--btn-ledge),
+    0 6px 12px -6px rgb(0 0 0 / 0.12);
   transition:
     background-color 200ms var(--ease-spring),
     border-color 200ms var(--ease-spring),
+    box-shadow 120ms var(--ease-spring),
     transform 120ms var(--ease-spring);
   &:hover {
-    background: var(--secondary);
-    border-color: color-mix(in oklab, var(--olive-dark) 60%, transparent);
+    background-color: var(--secondary);
+    border-color: color-mix(in oklab, var(--olive-dark) 30%, transparent);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.3),
+      0 4px 0 var(--btn-ledge),
+      0 8px 14px -6px rgb(0 0 0 / 0.14);
   }
   &:active {
-    transform: translateY(1px);
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 1px 2px rgb(0 0 0 / 0.12),
+      0 1px 0 var(--btn-ledge),
+      0 2px 4px -2px rgb(0 0 0 / 0.15);
   }
 }
 

@@ -61,7 +61,10 @@ export function ProjectsApp() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+      {/* Lock the list while a popup is open so only the popup scrolls. */}
+      <div
+        className={`flex-1 overscroll-contain p-4 scrollbar-thin ${selected || dashRepo ? "overflow-hidden" : "overflow-y-auto"}`}
+      >
         {loading && <GridSkeleton />}
         {error && (
           <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
@@ -107,7 +110,7 @@ export function ProjectsApp() {
                 <p className="mt-1 line-clamp-2 text-sm text-ink-soft">
                   {r.desc ?? "No description provided."}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-1">
+                <div className="mb-4 mt-3 flex flex-wrap gap-1">
                   {r.topics.slice(0, 4).map((t) => (
                     <span
                       key={t}
@@ -117,7 +120,8 @@ export function ProjectsApp() {
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 flex items-center gap-2 border-t border-paper-line pt-3 text-xs text-ink-soft">
+                {/* mt-auto pins the footer to the card bottom so footers line up across a row. */}
+                <div className="mt-auto flex items-center gap-2 border-t border-paper-line pt-3 text-xs text-ink-soft">
                   <span className="inline-flex items-center gap-1 font-medium text-orange">
                     View details <PiArrowUpRight className="text-[11px]" />
                   </span>
@@ -288,7 +292,7 @@ function ProjectDetail({
           <Badges repo={repo} />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 scrollbar-thin">
           <div className="flex items-center justify-between gap-2">
             <h2 className="truncate text-base font-semibold text-olive-dark">{repo.name}</h2>
             <span className="shrink-0 font-mono text-[11px] text-ink-soft">
