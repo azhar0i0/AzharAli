@@ -25,8 +25,8 @@ export function HomeApp() {
       </div>
 
       <p className="mt-7 max-w-[60ch] text-[15px] leading-[1.7] text-ink">
-        I build web and mobile products end to end: React and Next.js on the
-        front, Node.js on the back. For three years I've taken ideas from a
+        I'm a freelance full-stack developer building web and mobile products
+        end to end: React and Next.js on the front, Node.js on the back. For three years I've taken ideas from a
         rough sketch to a shipped app, with close attention to speed,
         accessibility and the small interactions people notice.
       </p>

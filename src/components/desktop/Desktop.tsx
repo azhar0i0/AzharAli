@@ -3,7 +3,6 @@ import { getTheme, THEMES, useIconStore, useSettingsStore, useWindowStore } from
 import { DesktopIcon } from "./DesktopIcon";
 import { Window } from "./Window";
 import { Taskbar } from "./Taskbar";
-import { BootScreen } from "./BootScreen";
 import { ContextMenu } from "./ContextMenu";
 import { CommandPalette } from "./CommandPalette";
 import { APP_META } from "@/lib/desktop/apps";
@@ -167,7 +166,6 @@ export function Desktop() {
       {menu && <ContextMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)} />}
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
       <Taskbar />
-      <BootScreen />
       <BootFinished />
 
       {/* Custom cursor (pointer devices only) */}

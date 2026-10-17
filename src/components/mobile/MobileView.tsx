@@ -18,7 +18,6 @@ import { getTheme, THEMES, useSettingsStore } from "@/lib/desktop/store";
 const THEME_CLASSES = THEMES.map((t) => `theme-${t.id}`);
 import { ProjectsApp } from "@/components/apps/ProjectsApp";
 import { SkillMeter } from "@/components/apps/SkillMeter";
-import { BootScreen } from "@/components/desktop/BootScreen";
 
 /* ============================ data ============================ */
 
@@ -235,7 +234,6 @@ export function MobileView() {
         />
       </nav>
 
-      <BootScreen />
     </div>
   );
 }
@@ -283,13 +281,13 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
             <h1 className="font-display text-4xl leading-none tracking-tight text-olive-dark">
               Azhar Ali
             </h1>
-            <p className="mt-1.5 text-sm text-ink-soft">Full-stack developer</p>
+            <p className="mt-1.5 text-sm text-ink-soft">Full-stack developer · React, Next.js, Node.js</p>
           </div>
         </div>
 
         <p className="mt-5 leading-relaxed text-ink">
-          I build web and mobile products end to end: React and Next.js on the front, Node.js on
-          the back. For three years I've taken ideas from a rough sketch to a shipped app, with close
+          I'm a freelance full-stack developer building web and mobile products end to end: React
+          and Next.js on the front, Node.js on the back. For three years I've taken ideas from a rough sketch to a shipped app, with close
           attention to speed, accessibility and the small interactions people notice.
         </p>
 
@@ -343,7 +341,7 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
       </section>
 
       {/* about / timeline */}
-      <Section id="about" title="The journey">
+      <Section id="about" title="About me">
         <ol className="relative border-l-2 border-paper-line pl-6">
           {TIMELINE.map((t, i) => (
             <motion.li
@@ -395,7 +393,7 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
       </Section>
 
       {/* services */}
-      <Section id="services" title="What I can build">
+      <Section id="services" title="Services: what I can build">
         <ol className="border-b border-paper-line">
           {SERVICES.map((s, i) => (
             <motion.li
@@ -420,7 +418,7 @@ function MePage({ onContact, onResume }: { onContact: () => void; onResume: () =
       </Section>
 
       {/* resume */}
-      <Section id="resume" title="Experience">
+      <Section id="resume" title="Experience & education">
         <div className="rounded-lg border border-paper-line bg-card p-4">
           <p className="text-sm leading-relaxed text-ink-soft">
             Full-stack developer with 3 years of experience building web and mobile interfaces. I

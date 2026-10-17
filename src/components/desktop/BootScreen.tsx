@@ -54,9 +54,10 @@ export function BootScreen() {
           {/* Static on purpose: this is server-rendered, so it must be visible
               before JavaScript loads (no opacity-0 entrance). */}
           <div className="relative w-full max-w-xs text-center">
-            <h1 className="font-display text-5xl leading-none tracking-tight text-olive-dark">
+            {/* Not an h1: the page's real heading lives in the profile content. */}
+            <p className="font-display text-5xl leading-none tracking-tight text-olive-dark">
               Azhar Ali
-            </h1>
+            </p>
             <p className="mt-2 text-sm text-ink-soft">Full-stack developer</p>
 
             <div className="mx-auto mt-8 h-0.5 w-40 overflow-hidden rounded-full bg-paper-line">

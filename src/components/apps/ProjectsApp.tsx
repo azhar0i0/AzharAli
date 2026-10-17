@@ -47,7 +47,7 @@ export function ProjectsApp() {
     <div className="flex h-full flex-col">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-3 border-b border-paper-line bg-secondary/60 px-4 py-3">
         <div>
-          <h1 className="font-semibold text-olive-dark">Projects</h1>
+          <h2 className="font-semibold text-olive-dark">Projects</h2>
           <p className="text-xs text-ink-soft">Selected work, newest first</p>
         </div>
         <div className="relative ml-auto md:w-56 w-full">

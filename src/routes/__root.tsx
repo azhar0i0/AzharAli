@@ -14,6 +14,7 @@ import { MotionConfig } from "framer-motion";
 import appCss from "../styles.css?url";
 import { reportError } from "../lib/error-reporting";
 import { useInspectGuard } from "../lib/useInspectGuard";
+import { SEO, STRUCTURED_DATA } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -79,29 +80,36 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
+    // Site-wide defaults; routes override title, description and canonical.
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Azhar Ali — AzharOS Portfolio" },
-      {
-        name: "description",
-        content:
-          "Interactive desktop-OS portfolio of Azhar Ali — full-stack developer building React, Next.js and Node apps.",
-      },
+      { title: SEO.title },
+      { name: "description", content: SEO.description },
       { name: "author", content: "Azhar Ali" },
-      { property: "og:title", content: "Azhar Ali — AzharOS Portfolio" },
-      {
-        property: "og:description",
-        content: "A retro desktop OS you can explore — projects, skills, terminal and more.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/preview.png" },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
+      { name: "theme-color", content: "#3d4a2a" },
+      { property: "og:site_name", content: "Azhar Ali" },
+      { property: "og:locale", content: "en_US" },
+      { property: "og:type", content: "profile" },
+      { property: "profile:first_name", content: "Azhar" },
+      { property: "profile:last_name", content: "Ali" },
+      { property: "og:image", content: SEO.image },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "675" },
+      { property: "og:image:alt", content: SEO.imageAlt },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "/preview.png" },
+      { name: "twitter:image", content: SEO.image },
+      { name: "twitter:image:alt", content: SEO.imageAlt },
+      { "script:ld+json": STRUCTURED_DATA },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+      { rel: "icon", href: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

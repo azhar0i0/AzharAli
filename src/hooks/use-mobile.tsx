@@ -17,3 +17,18 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+/** Like useIsMobile, but `undefined` until measured on the client (server render, hydration). */
+export function useViewport(): "mobile" | "desktop" | undefined {
+  const [viewport, setViewport] = React.useState<"mobile" | "desktop" | undefined>(undefined);
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const onChange = () => setViewport(mql.matches ? "mobile" : "desktop");
+    mql.addEventListener("change", onChange);
+    onChange();
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return viewport;
+}
